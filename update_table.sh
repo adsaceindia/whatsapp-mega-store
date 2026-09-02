@@ -1,0 +1,2 @@
+sed -i 's/<th className="pb-3 text-sm font-medium text-gray-500">Price<\/th>/<th className="pb-3 text-sm font-medium text-gray-500">Cost<\/th>\n                <th className="pb-3 text-sm font-medium text-gray-500">Price<\/th>\n                <th className="pb-3 text-sm font-medium text-gray-500">Est. Revenue<\/th>/g' src/pages/storeadmin/Products.tsx
+sed -i 's/colSpan={7}/colSpan={9}/g' src/pages/storeadmin/Products.tsx

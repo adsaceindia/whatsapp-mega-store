@@ -1,0 +1,2 @@
+sed -i 's/"ID","Title","Category","Price","Original Price","Inventory","Image"/"ID","Title","Category","Cost","Price","Original Price","Inventory","Image"/g' src/pages/storeadmin/Products.tsx
+sed -i 's/p => `"${p.id}","${p.title}","${p.category}","${p.price}","${p.originalPrice || '"''"'}/p => `"${p.id}","${p.title}","${p.category}","${p.cost || 0}","${p.price}","${p.originalPrice || '"''"'}/g' src/pages/storeadmin/Products.tsx

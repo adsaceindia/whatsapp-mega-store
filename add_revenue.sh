@@ -1,0 +1,2 @@
+sed -i 's/const removeColor = (index: number) => {/const totalExpectedRevenue = products.reduce((sum, p) => sum + ((p.price - (p.cost || 0)) * (p.inventoryQuantity || 0)), 0);\n\n  const removeColor = (index: number) => {/g' src/pages/storeadmin/Products.tsx
+sed -i 's/<p className="text-gray-500">Manage your store inventory.<\/p>/<p className="text-gray-500">Manage your store inventory. <span className="font-semibold text-green-600 ml-2">Total Expected Revenue (Profit): ${totalExpectedRevenue.toFixed(2)}<\/span><\/p>/g' src/pages/storeadmin/Products.tsx

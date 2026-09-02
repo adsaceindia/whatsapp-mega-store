@@ -1,0 +1,3 @@
+sed -i 's/import { useNavigate/import { useCart } from '"'"'..\/..\/context\/CartContext'"'"';\nimport { useNavigate/g' src/pages/storefront/StorefrontCategoryProducts.tsx
+sed -i 's/const navigate = useNavigate();/const navigate = useNavigate();\n  const { addToCart } = useCart();/g' src/pages/storefront/StorefrontCategoryProducts.tsx
+sed -i 's/alert('"'"'Added to cart!'"'"');/addToCart({ productId: product.id, title: product.title, price: product.price, image: product.image, quantity: 1, size: product.sizes?.[0], color: product.colors?.[0] });/g' src/pages/storefront/StorefrontCategoryProducts.tsx

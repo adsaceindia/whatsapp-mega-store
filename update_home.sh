@@ -1,0 +1,3 @@
+sed -i 's/import { Link, useNavigate } from '"'"'react-router'"'"';/import { Link, useNavigate } from '"'"'react-router'"'"';\nimport { useCart } from '"'"'..\/..\/context\/CartContext'"'"';/g' src/pages/storefront/StorefrontHome.tsx
+sed -i 's/const navigate = useNavigate();/const navigate = useNavigate();\n  const { addToCart } = useCart();/g' src/pages/storefront/StorefrontHome.tsx
+sed -i 's/alert('"'"'Added to cart!'"'"');/addToCart({ productId: product.id, title: product.title, price: product.price, image: product.image, quantity: 1, size: product.sizes?.[0], color: product.colors?.[0] });/g' src/pages/storefront/StorefrontHome.tsx

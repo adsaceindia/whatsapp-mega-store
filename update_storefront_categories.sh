@@ -1,0 +1,1 @@
+sed -i 's/const products = querySnapshot.docs.map(doc => doc.data());/const products = querySnapshot.docs.map(doc => doc.data()).filter((p: any) => p.active !== false);/g' src/pages/storefront/StorefrontCategories.tsx

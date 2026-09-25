@@ -183,7 +183,7 @@ export function StorefrontCart() {
   }
 
   return (
-    <main className="w-full bg-neutral-50 dark:bg-slate-950 min-h-screen pb-28 md:pb-12 text-left">
+    <main className="w-full bg-white dark:bg-slate-950 min-h-screen pb-28 md:pb-12 text-left">
       <div className="max-w-7xl mx-auto px-2 md:px-6 pt-3 md:pt-8">
         
         <div className="flex items-center justify-between mb-6">

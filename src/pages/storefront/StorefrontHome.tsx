@@ -133,7 +133,7 @@ export function StorefrontHome() {
   }
 
   return (
-    <div className="w-full bg-neutral-50 dark:bg-slate-950 min-h-screen pb-12">
+    <div className="w-full bg-white dark:bg-slate-950 min-h-screen pb-12">
       
       {/* Toast Notification Popup */}
       {toastMessage && (

@@ -143,7 +143,7 @@ export function StorefrontProduct() {
   const galleryImages = [product.image, ...(product.gallery || [])].filter(Boolean);
 
   return (
-    <main className="w-full bg-neutral-50 dark:bg-slate-950 min-h-screen pb-24 md:pb-12 text-left">
+    <main className="w-full bg-white dark:bg-slate-950 min-h-screen pb-24 md:pb-12 text-left">
       <Helmet>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />

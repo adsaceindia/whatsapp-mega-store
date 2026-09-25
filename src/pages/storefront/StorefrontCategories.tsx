@@ -107,7 +107,7 @@ export function StorefrontCategories() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-slate-950 pt-4 pb-20 text-left">
+    <div className="min-h-screen bg-white dark:bg-slate-950 pt-4 pb-20 text-left">
       
       {/* Toast Alert */}
       {toastMessage && (

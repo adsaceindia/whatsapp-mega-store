@@ -61,7 +61,7 @@ export function StorefrontLayout() {
   }, []);
 
   return (
-    <div className="bg-neutral-50 dark:bg-slate-950 text-neutral-900 dark:text-slate-100 min-h-screen flex flex-col font-sans selection:bg-emerald-500 selection:text-white pb-20 md:pb-0">
+    <div className="bg-white dark:bg-slate-950 text-neutral-900 dark:text-slate-100 min-h-screen flex flex-col font-sans selection:bg-[#DD8560] selection:text-white pb-20 md:pb-0">
       {/* Top Header */}
       <TopNavBar />
       

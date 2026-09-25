@@ -7,7 +7,7 @@ import { useCart } from '../../context/CartContext';
 import { Coupon, getCoupons } from '../../services/couponService';
 import { convertCartSession, updateCartSessionCustomer } from '../../services/abandonedCartService';
 import { BlurImage } from '../../components/storefront/BlurImage';
-import { trackBeginCheckout, trackPurchase, trackAddShippingInfo, trackAddPaymentInfo } from '../../utils/analytics';
+import { ShoppingBag, Trash2, Plus, Minus, Tag, MapPin, CheckCircle, AlertCircle, MessageSquare, ArrowRight, Loader2 } from 'lucide-react';
 
 export function StorefrontCart() {
   const { storeSettings } = useStoreConfig();
@@ -16,9 +16,8 @@ export function StorefrontCart() {
   const [couponError, setCouponError] = useState<string | null>(null);
   const [couponSuccess, setCouponSuccess] = useState<string | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     getGeneralSettings().then(setSettings).catch(console.error);
-    
     getCoupons().then(coupons => {
       setAvailableCoupons(coupons.filter(c => c.active !== false));
     }).catch(console.error);
@@ -38,7 +37,6 @@ export function StorefrontCart() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Debounced effect to sync customer details into our abandoned cart session
   useEffect(() => {
     const hasSomeDetail = !!(
       customer.name.trim() || 
@@ -50,22 +48,16 @@ export function StorefrontCart() {
     if (cartSessionId && hasSomeDetail && items.length > 0) {
       const timer = setTimeout(() => {
         updateCartSessionCustomer(cartSessionId, customer).catch(console.error);
-      }, 1000); // 1s debounce
+      }, 1000);
       return () => clearTimeout(timer);
     }
   }, [customer, cartSessionId, items.length]);
 
   const subtotal = useMemo(() => items.reduce((acc, item) => acc + (item.price * item.quantity), 0), [items]);
-  const tax = subtotal * 0.05; // ~5%
+  const tax = subtotal * 0.05;
   const total = Math.max(0, subtotal + tax - discount);
 
-  useEffect(() => {
-    if (items.length > 0) {
-      trackBeginCheckout(items, total);
-    }
-  }, [items.length]);
-
-  const applySpecificCoupon = async (codeToApply: string) => {
+  const handleApplyCoupon = async (codeToApply: string) => {
     setCouponError(null);
     setCouponSuccess(null);
     if (!codeToApply) {
@@ -83,6 +75,7 @@ export function StorefrontCart() {
         setCouponError("Invalid coupon code.");
         return;
       }
+
       if (coupon.active === false) {
         setDiscount(0);
         setCouponError("This coupon is no longer active.");
@@ -91,7 +84,7 @@ export function StorefrontCart() {
 
       if (coupon.minOrderValue && subtotal < coupon.minOrderValue) {
         setDiscount(0);
-        setCouponError(`This coupon requires a minimum order value of ${formatPrice(coupon.minOrderValue)}.`);
+        setCouponError(`Requires a minimum order value of ${formatPrice(coupon.minOrderValue)}.`);
         return;
       }
 
@@ -99,32 +92,28 @@ export function StorefrontCart() {
       if (coupon.discountType === 'percentage') {
         calculatedDiscount = subtotal * (coupon.discountValue / 100);
       } else {
-        calculatedDiscount = Math.min(coupon.discountValue, subtotal);
+        calculatedDiscount = coupon.discountValue;
       }
-      
+
       setDiscount(calculatedDiscount);
-      setCouponSuccess(`Coupon "${coupon.code}" applied! You saved ${formatPrice(calculatedDiscount)}`);
-    } catch (error) {
-      console.error("Error applying coupon", error);
-      setCouponError("Error applying coupon.");
+      setCouponSuccess(`Coupon "${coupon.code}" applied: -${formatPrice(calculatedDiscount)}`);
+    } catch (err) {
+      console.error('Error applying coupon', err);
+      setCouponError('Error verifying coupon.');
     }
   };
 
-  const handleApplyCoupon = async () => {
-    await applySpecificCoupon(couponCode);
-  };
-
-  const handleSelectCoupon = (code: string) => {
-    setCouponCode(code);
-    applySpecificCoupon(code);
-  };
-
-  const handleConfirmOrder = async () => {
-    if (!customer.name || !customer.whatsapp || !customer.address || !customer.city || !customer.pincode) {
-      alert("Please fill in all delivery details");
+  const handleCheckout = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (items.length === 0) return;
+    
+    if (!customer.name.trim() || !customer.whatsapp.trim() || !customer.address.trim() || !customer.city.trim() || !customer.pincode.trim()) {
+      alert("Please fill in all delivery details before placing your order.");
       return;
     }
+
     setIsSubmitting(true);
+
     try {
       const orderData = {
         items,
@@ -136,315 +125,289 @@ export function StorefrontCart() {
         status: 'pending',
         createdAt: new Date().toISOString()
       };
-      
-      trackAddShippingInfo(items, total, 'Standard Delivery');
-      trackAddPaymentInfo(items, total, 'Cash on Delivery (WhatsApp)');
+
       const orderId = await addOrder(orderData);
       
-      // Mark cart session as converted/ordered
       if (cartSessionId) {
         await convertCartSession(cartSessionId);
       }
-      
+
       const storePhone = settings?.whatsappNumber?.replace(/[^0-9]/g, '') || "1234567890";
       const currentStoreName = storeSettings?.storeName || "My Store";
       const intro = `Hello, I'd like to place an order on ${currentStoreName}!%0AOrder ID: ${orderId}%0A%0A*Customer Details:*%0AName: ${customer.name}%0APhone: ${customer.whatsapp}%0AAddress: ${customer.address}, ${customer.city} - ${customer.pincode}%0A%0A*Order Items:*%0A`;
       
-      const itemsList = items.map(item => {
-        let text = `- ${item.quantity}x ${item.title} (${formatPrice(item.price)})`;
+      const itemText = items.map((item) => {
+        let details = `- ${item.quantity}x ${item.title} (${formatPrice(item.price)})`;
         const variants = [];
         if (item.size) variants.push(item.size);
         if (item.color) variants.push(item.color);
         if (variants.length > 0) {
-          text += ` [${variants.join(', ')}]`;
+          details += ` [${variants.join(', ')}]`;
         }
-        return text;
+        return details;
       }).join('%0A');
-      
-      const totalMsg = `%0A%0A*Subtotal:* ${formatPrice(subtotal)}%0A*Discount:* -${formatPrice(discount)}%0A*Total:* ${formatPrice(total)}`;
-      const url = `https://wa.me/${storePhone}?text=${intro}${itemsList}${totalMsg}`;
-      
-      const completedOrder = { ...orderData, id: orderId };
-      
-      // Tracking
-      trackPurchase(orderId, items, total, tax, 0, couponCode);
 
+      const totalMsg = `%0A%0A*Subtotal:* ${formatPrice(subtotal)}%0A*Discount:* -${formatPrice(discount)}%0A*Total:* ${formatPrice(total)}`;
+      const url = `https://wa.me/${storePhone}?text=${intro}${itemText}${totalMsg}`;
+
+      const completedOrder = { ...orderData, id: orderId };
       clearCart();
       navigate('/checkout', { state: { order: completedOrder, orderId, whatsappUrl: url } });
-    } catch (error) {
-      console.error("Error confirming order", error);
-      alert("There was an error confirming your order.");
+    } catch (err) {
+      console.error("Error creating order:", err);
+      alert("Error placing order. Please try again.");
+    } finally {
       setIsSubmitting(false);
     }
   };
 
-  return (
-    <main className="w-full py-6 pb-24">
-      <div className="flex items-center gap-4 mb-8">
-        <Link to="/" className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center hover:bg-surface-container-high transition-colors">
-          <span className="material-symbols-outlined">arrow_back</span>
-        </Link>
-        <h1 className="text-2xl md:text-3xl font-bold text-on-surface">Your Cart</h1>
-      </div>
+  if (items.length === 0) {
+    return (
+      <main className="w-full min-h-[75vh] flex items-center justify-center p-4">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-12 text-center max-w-md w-full border border-neutral-200/70 dark:border-slate-800 shadow-sm">
+          <div className="w-16 h-16 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-4">
+            <ShoppingBag className="w-8 h-8" />
+          </div>
+          <h2 className="text-lg md:text-xl font-extrabold text-neutral-900 dark:text-white mb-2">Your Shopping Bag is Empty</h2>
+          <p className="text-xs text-neutral-500 dark:text-slate-400 mb-6">Looks like you haven't added any products to your bag yet.</p>
+          <Link
+            to="/categories"
+            className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 rounded-full font-bold text-xs shadow-md shadow-emerald-600/20 active:scale-95 transition-all"
+          >
+            <span>Start Shopping</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </main>
+    );
+  }
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Cart Items & Delivery Details */}
-        <div className="lg:col-span-8 flex flex-col gap-6">
-          <div className="bg-surface-container-low border border-outline-variant rounded-2xl p-4 md:p-6 shadow-sm">
-            {items.length > 0 ? (
-              <div className="flex flex-col gap-6">
-                {items.map((item) => (
-                  <div key={item.id} className="flex gap-4">
-                    <div className="w-24 h-24 rounded-xl border border-outline-variant bg-neutral-50 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                      <BlurImage src={item.image} alt={item.title} className="w-full h-full object-cover" />
+  return (
+    <main className="w-full bg-neutral-50 dark:bg-slate-950 min-h-screen pb-28 md:pb-12 text-left">
+      <div className="max-w-7xl mx-auto px-3 md:px-6 pt-4 md:pt-8">
+        
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-lg md:text-2xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
+            Shopping Cart ({items.length} {items.length === 1 ? 'item' : 'items'})
+          </h1>
+          <button 
+            onClick={clearCart}
+            className="text-xs font-bold text-rose-600 dark:text-rose-400 hover:underline"
+          >
+            Clear Bag
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          {/* Left Column: Cart Items List */}
+          <div className="lg:col-span-7 space-y-3">
+            {items.map((item) => (
+              <div 
+                key={`${item.productId}-${item.size}-${item.color}`}
+                className="bg-white dark:bg-slate-900 rounded-2xl border border-neutral-200/70 dark:border-slate-800 p-3 md:p-4 flex gap-3 md:gap-4 items-center shadow-xs"
+              >
+                {/* Product Thumbnail */}
+                <div className="w-20 h-20 md:w-24 md:h-24 bg-neutral-50 dark:bg-slate-800 rounded-xl overflow-hidden p-1 border border-neutral-100 dark:border-slate-700 flex-shrink-0">
+                  <BlurImage src={item.image} alt={item.title} className="w-full h-full object-contain" />
+                </div>
+
+                {/* Info & Quantity Controls */}
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-xs md:text-sm text-neutral-900 dark:text-white truncate mb-1">{item.title}</h3>
+                  
+                  {/* Variant info tags */}
+                  {(item.size || item.color) && (
+                    <div className="flex gap-1.5 mb-2">
+                      {item.size && <span className="bg-neutral-100 dark:bg-slate-800 text-neutral-600 dark:text-slate-300 text-[10px] font-bold px-2 py-0.5 rounded-md">Size: {item.size}</span>}
+                      {item.color && <span className="bg-neutral-100 dark:bg-slate-800 text-neutral-600 dark:text-slate-300 text-[10px] font-bold px-2 py-0.5 rounded-md">Color: {item.color}</span>}
                     </div>
-                    <div className="flex-1 flex flex-col">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="text-sm md:text-base font-bold text-on-surface leading-tight mb-1">{item.title}</h3>
-                          <p className="text-[10px] md:text-xs text-on-surface-variant font-medium">
-                            {item.size && `Size: ${item.size}`} {item.color && `| Color: ${item.color}`}
-                          </p>
-                        </div>
-                        <button onClick={() => removeFromCart(item.id)} className="text-outline hover:text-error transition-colors p-1 md:p-2">
-                          <span className="material-symbols-outlined text-[18px] md:text-[20px]">delete</span>
-                        </button>
-                      </div>
-                      <div className="mt-auto flex justify-between items-end">
-                        <p className="text-sm md:text-base font-bold text-primary">{formatPrice(item.price)}</p>
-                        <div className="flex items-center gap-2 md:gap-3 bg-surface border border-outline-variant rounded-lg px-1.5 py-0.5 md:px-2 md:py-1">
-                          <button onClick={() => updateQuantity(item.id, -1)} className="text-on-surface-variant hover:text-on-surface w-5 h-5 md:w-6 md:h-6 flex items-center justify-center">
-                            <span className="material-symbols-outlined text-[14px] md:text-[16px]">remove</span>
-                          </button>
-                          <span className="font-bold text-xs md:text-sm w-4 md:w-6 text-center">{item.quantity}</span>
-                          <button onClick={() => updateQuantity(item.id, 1)} className="text-on-surface-variant hover:text-on-surface w-5 h-5 md:w-6 md:h-6 flex items-center justify-center">
-                            <span className="material-symbols-outlined text-[14px] md:text-[16px]">add</span>
-                          </button>
-                        </div>
-                      </div>
+                  )}
+
+                  <div className="flex items-center justify-between gap-2 mt-auto">
+                    <span className="font-extrabold text-sm md:text-base text-neutral-900 dark:text-white">
+                      {formatPrice(item.price * item.quantity)}
+                    </span>
+
+                    {/* Quantity Stepper */}
+                    <div className="flex items-center gap-2 bg-neutral-100 dark:bg-slate-800 p-1 rounded-xl border border-neutral-200/60 dark:border-slate-700">
+                      <button
+                        onClick={() => updateQuantity(item.productId, item.quantity - 1, item.size, item.color)}
+                        className="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-white dark:hover:bg-slate-700 text-neutral-600 dark:text-slate-200 font-bold active:scale-95"
+                      >
+                        <Minus className="w-3 h-3" />
+                      </button>
+                      <span className="w-5 text-center font-mono font-bold text-xs text-neutral-800 dark:text-white">
+                        {item.quantity}
+                      </span>
+                      <button
+                        onClick={() => updateQuantity(item.productId, item.quantity + 1, item.size, item.color)}
+                        className="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-white dark:hover:bg-slate-700 text-neutral-600 dark:text-slate-200 font-bold active:scale-95"
+                      >
+                        <Plus className="w-3 h-3" />
+                      </button>
                     </div>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="py-12 flex flex-col items-center justify-center text-center">
-                <div className="w-20 h-20 bg-surface-container rounded-full flex items-center justify-center mb-4 text-outline">
-                  <span className="material-symbols-outlined text-3xl md:text-4xl">shopping_cart</span>
                 </div>
-                <h2 className="text-lg md:text-xl font-bold text-on-surface mb-2">Your cart is empty</h2>
-                <p className="text-on-surface-variant mb-6">Looks like you haven't added anything yet.</p>
-                <Link to="/categories" className="btn btn-primary btn-lg">
-                  Start Shopping
-                </Link>
+
+                {/* Remove Trash Icon */}
+                <button
+                  onClick={() => removeFromCart(item.productId, item.size, item.color)}
+                  className="p-2 text-neutral-400 hover:text-rose-600 transition-colors"
+                  title="Remove Item"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
               </div>
-            )}
-          </div>
-          
-          {/* Delivery Details Form */}
-          <div className="bg-surface border border-outline-variant rounded-xl p-6 mt-2 shadow-sm">
-            <h2 className="text-lg md:text-xl font-bold text-on-surface mb-6 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">local_shipping</span>
-              Delivery Details
-            </h2>
-            <form className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="col-span-1 md:col-span-2">
-                <label className="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-wider">Full Name</label>
+            ))}
+
+            {/* Delivery Destination Form Card */}
+            <div className="bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl border border-neutral-200/70 dark:border-slate-800 p-4 md:p-6 shadow-xs mt-6">
+              <h3 className="text-xs md:text-sm font-extrabold text-neutral-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5 mb-4">
+                <MapPin className="w-4 h-4 text-emerald-600" />
+                Shipping Destination & Contact
+              </h3>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <input 
-                  type="text" 
+                  type="text"
+                  required
+                  placeholder="Full Name"
                   value={customer.name}
                   onChange={e => setCustomer({...customer, name: e.target.value})}
-                  className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm" 
-                  placeholder="John Doe" 
+                  className="w-full px-3.5 py-2.5 bg-neutral-50 dark:bg-slate-800 border border-neutral-200 dark:border-slate-700 rounded-xl text-xs font-medium outline-none text-neutral-900 dark:text-white focus:border-emerald-500"
                 />
-              </div>
-              <div className="col-span-1 md:col-span-2">
-                <label className="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-wider">WhatsApp No.</label>
                 <input 
-                  type="tel" 
+                  type="tel"
+                  required
+                  placeholder="WhatsApp Mobile Number"
                   value={customer.whatsapp}
                   onChange={e => setCustomer({...customer, whatsapp: e.target.value})}
-                  className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm" 
-                  placeholder="+1234567890" 
+                  className="w-full px-3.5 py-2.5 bg-neutral-50 dark:bg-slate-800 border border-neutral-200 dark:border-slate-700 rounded-xl text-xs font-medium outline-none text-neutral-900 dark:text-white focus:border-emerald-500"
                 />
-              </div>
-              <div className="col-span-1 md:col-span-2">
-                <label className="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-wider">Address</label>
                 <input 
-                  type="text" 
+                  type="text"
+                  required
+                  placeholder="Street Address, Flat / House No."
                   value={customer.address}
                   onChange={e => setCustomer({...customer, address: e.target.value})}
-                  className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm" 
-                  placeholder="123 Main St, Apartment/Suite" 
+                  className="sm:col-span-2 w-full px-3.5 py-2.5 bg-neutral-50 dark:bg-slate-800 border border-neutral-200 dark:border-slate-700 rounded-xl text-xs font-medium outline-none text-neutral-900 dark:text-white focus:border-emerald-500"
                 />
-              </div>
-              <div className="col-span-1">
-                <label className="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-wider">City</label>
                 <input 
-                  type="text" 
+                  type="text"
+                  required
+                  placeholder="City"
                   value={customer.city}
                   onChange={e => setCustomer({...customer, city: e.target.value})}
-                  className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm" 
-                  placeholder="City" 
+                  className="w-full px-3.5 py-2.5 bg-neutral-50 dark:bg-slate-800 border border-neutral-200 dark:border-slate-700 rounded-xl text-xs font-medium outline-none text-neutral-900 dark:text-white focus:border-emerald-500"
                 />
-              </div>
-              <div className="col-span-1">
-                <label className="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-wider">Pincode</label>
                 <input 
-                  type="text" 
+                  type="text"
+                  required
+                  placeholder="Pincode / ZIP Code"
                   value={customer.pincode}
                   onChange={e => setCustomer({...customer, pincode: e.target.value})}
-                  className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm" 
-                  placeholder="123456" 
+                  className="w-full px-3.5 py-2.5 bg-neutral-50 dark:bg-slate-800 border border-neutral-200 dark:border-slate-700 rounded-xl text-xs font-medium outline-none text-neutral-900 dark:text-white focus:border-emerald-500"
                 />
               </div>
-            </form>
+            </div>
           </div>
-        </div>
-        
-        {/* Order Summary Section */}
-        <div className="lg:col-span-4 sticky top-24 h-fit">
-          <div className="bg-surface-container-low border border-outline-variant rounded-2xl p-6 shadow-sm">
-            <h2 className="text-lg md:text-xl font-bold text-on-surface mb-6">Order Summary</h2>
+
+          {/* Right Column: Summary Card */}
+          <div className="lg:col-span-5 space-y-4">
             
-            {/* Coupon Code */}
-            <div className="mb-4 flex gap-2">
-              <input 
-                type="text" 
-                value={couponCode}
-                onChange={(e) => setCouponCode(e.target.value)}
-                className="flex-1 px-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm uppercase" 
-                placeholder="Coupon Code" 
-              />
-              <button 
-                onClick={handleApplyCoupon}
-                className="bg-secondary text-white px-4 py-3 rounded-lg font-semibold hover:bg-opacity-90 transition-colors text-sm"
+            {/* Voucher / Coupon Box */}
+            <div className="bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl border border-neutral-200/70 dark:border-slate-800 p-4 md:p-6 shadow-xs">
+              <label className="block text-xs font-extrabold text-neutral-900 dark:text-white uppercase tracking-wider mb-2">
+                Have a Promo Voucher?
+              </label>
+              <div className="flex gap-2">
+                <input 
+                  type="text"
+                  value={couponCode}
+                  onChange={e => setCouponCode(e.target.value)}
+                  placeholder="Enter Voucher Code"
+                  className="flex-1 px-3.5 py-2 bg-neutral-50 dark:bg-slate-800 border border-neutral-200 dark:border-slate-700 rounded-xl text-xs uppercase font-bold outline-none text-neutral-900 dark:text-white focus:border-emerald-500"
+                />
+                <button 
+                  onClick={() => handleApplyCoupon(couponCode)}
+                  className="bg-neutral-900 dark:bg-slate-700 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-neutral-800"
+                >
+                  Apply
+                </button>
+              </div>
+              {couponError && <p className="text-[10px] text-rose-600 font-semibold mt-1">{couponError}</p>}
+              {couponSuccess && <p className="text-[10px] text-emerald-600 font-semibold mt-1">{couponSuccess}</p>}
+            </div>
+
+            {/* Price Calculations & Order Checkout Button */}
+            <div className="bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl border border-neutral-200/70 dark:border-slate-800 p-4 md:p-6 shadow-xs space-y-3">
+              <h3 className="text-xs font-extrabold text-neutral-900 dark:text-white uppercase tracking-wider border-b border-neutral-100 dark:border-slate-800 pb-3">
+                Order Summary
+              </h3>
+
+              <div className="space-y-2 text-xs text-neutral-600 dark:text-slate-300 font-medium">
+                <div className="flex justify-between">
+                  <span>Subtotal:</span>
+                  <span className="font-bold text-neutral-900 dark:text-white">{formatPrice(subtotal)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Est. GST / Tax (5%):</span>
+                  <span className="font-bold text-neutral-900 dark:text-white">{formatPrice(tax)}</span>
+                </div>
+                {discount > 0 && (
+                  <div className="flex justify-between text-emerald-600 font-bold">
+                    <span>Voucher Discount:</span>
+                    <span>-{formatPrice(discount)}</span>
+                  </div>
+                )}
+                <div className="pt-3 border-t border-dashed border-neutral-200 dark:border-slate-700 flex justify-between items-center text-sm">
+                  <span className="font-extrabold text-neutral-900 dark:text-white uppercase">Grand Total:</span>
+                  <span className="font-extrabold text-emerald-600 dark:text-emerald-400 text-base">{formatPrice(total)}</span>
+                </div>
+              </div>
+
+              <button
+                onClick={handleCheckout}
+                disabled={isSubmitting}
+                className="w-full mt-4 bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-2xl font-extrabold text-xs tracking-wider uppercase shadow-lg shadow-emerald-600/30 active:scale-95 transition-all flex items-center justify-center gap-2"
               >
-                Apply
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Processing Order...</span>
+                  </>
+                ) : (
+                  <>
+                    <MessageSquare className="w-4 h-4" />
+                    <span>Order via WhatsApp</span>
+                  </>
+                )}
               </button>
             </div>
 
-            {/* Error or Success notification */}
-            {couponError && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-800 text-xs font-semibold rounded-xl flex items-center gap-2">
-                <span className="material-symbols-outlined text-[16px] text-red-600">error</span>
-                <span>{couponError}</span>
-              </div>
-            )}
-            {couponSuccess && (
-              <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold rounded-xl flex items-center gap-2">
-                <span className="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span>
-                <span>{couponSuccess}</span>
-              </div>
-            )}
-
-            {/* Available Coupon Codes display */}
-            {availableCoupons.length > 0 && (
-              <div className="mb-6 bg-surface border border-outline-variant p-3.5 rounded-xl">
-                <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2 flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[14px] text-primary">sell</span>
-                  Available Coupons:
-                </p>
-                <div className="flex flex-col gap-2">
-                  {availableCoupons.map((coupon) => {
-                    const isMinApplicable = coupon.minOrderValue ? subtotal >= coupon.minOrderValue : true;
-                    return (
-                      <button
-                        key={coupon.id}
-                        type="button"
-                        onClick={() => isMinApplicable && handleSelectCoupon(coupon.code)}
-                        className={`w-full text-xs p-2.5 rounded-xl border flex items-center justify-between transition-all ${
-                          !isMinApplicable 
-                            ? 'opacity-50 border-outline-variant bg-surface-container-low cursor-not-allowed' 
-                            : couponCode.toUpperCase() === coupon.code.toUpperCase()
-                              ? 'border-primary bg-primary/10 text-primary font-bold scale-[1.01]'
-                              : 'border-dashed border-primary/30 hover:border-primary hover:bg-primary/5 text-on-surface'
-                        }`}
-                        title={!isMinApplicable ? `Requires a minimum subtotal of ${formatPrice(coupon.minOrderValue || 0)}` : 'Click to apply coupon'}
-                      >
-                        <div className="flex flex-col items-start">
-                          <span className="font-mono uppercase font-bold tracking-wider text-sm">{coupon.code}</span>
-                          {coupon.minOrderValue && (
-                            <span className="text-[10px] text-on-surface-variant">
-                              Min. spend: {formatPrice(coupon.minOrderValue)}
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-[11px] bg-primary/15 text-primary px-2 py-0.5 rounded-md font-bold">
-                            {coupon.discountType === 'percentage' ? `${coupon.discountValue}% OFF` : `${formatPrice(coupon.discountValue)} OFF`}
-                          </span>
-                          {isMinApplicable ? (
-                            <span className="material-symbols-outlined text-[16px] text-primary">arrow_forward</span>
-                          ) : (
-                            <span className="material-symbols-outlined text-[16px] text-on-surface-variant">lock</span>
-                          )}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            <div className="space-y-4 mb-8">
-              <div className="flex justify-between text-base">
-                <span className="text-on-surface-variant">Subtotal</span>
-                <span className="text-on-surface font-bold">{formatPrice(subtotal)}</span>
-              </div>
-              <div className="flex justify-between text-base">
-                <span className="text-on-surface-variant">Estimated Shipping</span>
-                <span className="text-secondary font-bold">FREE</span>
-              </div>
-              {discount > 0 && (
-                <div className="flex justify-between text-base text-primary">
-                  <span className="font-semibold">Discount</span>
-                  <span className="font-bold">-{formatPrice(discount)}</span>
-                </div>
-              )}
-              <div className="flex justify-between text-base">
-                <span className="text-on-surface-variant">Tax</span>
-                <span className="text-on-surface font-bold">{formatPrice(tax)}</span>
-              </div>
-              <div className="h-px bg-outline-variant my-4"></div>
-              <div className="flex justify-between items-baseline">
-                <span className="text-lg md:text-xl font-bold text-on-surface">Total</span>
-                <span className="text-2xl md:text-3xl font-bold text-primary">{formatPrice(total)}</span>
-              </div>
-            </div>
-            
-            <div className="bg-primary-container/10 rounded-xl p-4 mb-6 border border-primary-container/30">
-              <div className="flex gap-2 mb-1">
-                <span className="material-symbols-outlined text-primary">info</span>
-                <span className="font-bold text-on-primary-container text-xs">How it works</span>
-              </div>
-              <p className="text-sm text-on-primary-container">
-                Once you confirm, we'll open WhatsApp on your device with your order details pre-filled. Just hit send to finalize with the seller!
-              </p>
-            </div>
-            
-            <button 
-              id="confirm-order-button"
-              onClick={handleConfirmOrder}
-              disabled={items.length === 0 || isSubmitting}
-              className="w-full bg-primary-container text-on-primary-container hover:scale-[1.02] hover:-translate-y-0.5 hover:shadow-xl active:scale-[0.96] active:translate-y-0 transition-all duration-300 ease-out rounded-full py-4 px-6 flex items-center justify-center gap-4 font-semibold shadow-lg disabled:opacity-50 disabled:hover:scale-100 disabled:hover:translate-y-0 disabled:hover:shadow-lg"
-            >
-              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>chat</span>
-              {isSubmitting ? 'Processing...' : 'Confirm Order'}
-            </button>
-            <p className="mt-4 text-center text-sm text-on-surface-variant">
-              Payments are arranged directly via chat.
-            </p>
           </div>
-          
-          <div className="mt-6 p-4 border border-outline-variant border-dashed rounded-xl flex items-center gap-4 bg-surface">
-            <span className="material-symbols-outlined text-on-surface-variant">verified_user</span>
-            <div>
-              <p className="font-bold text-on-surface text-xs">Secure Messaging</p>
-              <p className="text-on-surface-variant text-sm">Your order privacy is protected.</p>
-            </div>
-          </div>
+
         </div>
+
       </div>
+
+      {/* Mobile App Floating Bottom Summary Bar */}
+      <div className="fixed bottom-16 left-3 right-3 p-3 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-2xl rounded-2xl border border-neutral-200/80 dark:border-slate-800 z-40 md:hidden flex items-center justify-between gap-3">
+        <div>
+          <span className="text-[10px] text-neutral-400 uppercase font-bold tracking-wider block">Total Amount</span>
+          <span className="text-base font-extrabold text-emerald-600 dark:text-emerald-400">{formatPrice(total)}</span>
+        </div>
+        <button
+          onClick={handleCheckout}
+          disabled={isSubmitting}
+          className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-extrabold text-xs shadow-md active:scale-95 transition-all flex items-center gap-1.5"
+        >
+          <MessageSquare className="w-4 h-4" />
+          <span>Checkout</span>
+        </button>
+      </div>
+
     </main>
   );
 }

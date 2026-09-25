@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { getGeneralSettings, getAnalyticsSettings } from '../../services/settingsService';
 import { Outlet, useLocation } from 'react-router';
 import { TopNavBar } from '../../components/storefront/TopNavBar';
 import { BottomNavBar } from '../../components/storefront/BottomNavBar';
 import { MobileDrawer } from '../../components/storefront/MobileDrawer';
 import { CustomerLoginModal } from '../../components/storefront/CustomerLoginModal';
+import { Footer } from '../../components/storefront/Footer';
 import { AnimatePresence, motion } from 'motion/react';
 
 export function StorefrontLayout() {
@@ -26,17 +27,16 @@ export function StorefrontLayout() {
     }
 
     getGeneralSettings().then(settings => {
-      if (settings.currency) {
+      if (settings?.currency) {
         window.storeCurrency = settings.currency;
       }
-    });
+    }).catch(console.error);
 
     // Dynamically inject Google Tag Manager (GTM)
     getAnalyticsSettings().then(analytics => {
       if (analytics && analytics.gtmId) {
         const gtmContainerId = analytics.gtmId.trim();
         if (gtmContainerId && !window.document.getElementById('gtm-script-injector')) {
-          // Create GTM script element
           const script = window.document.createElement('script');
           script.id = 'gtm-script-injector';
           script.innerHTML = `
@@ -48,7 +48,6 @@ export function StorefrontLayout() {
           `;
           window.document.head.appendChild(script);
 
-          // Create GTM noscript iframe
           const noscript = window.document.createElement('noscript');
           noscript.id = 'gtm-noscript-injector';
           noscript.innerHTML = `
@@ -62,24 +61,38 @@ export function StorefrontLayout() {
   }, []);
 
   return (
-    <div className="bg-background text-on-surface min-h-screen flex flex-col font-sans">
+    <div className="bg-neutral-50 dark:bg-slate-950 text-neutral-900 dark:text-slate-100 min-h-screen flex flex-col font-sans selection:bg-emerald-500 selection:text-white pb-20 md:pb-0">
+      {/* Top Header */}
       <TopNavBar />
+      
+      {/* Drawer */}
       <MobileDrawer />
-      <div className="flex-1 pt-16 w-full max-w-7xl mx-auto px-4 md:px-8 overflow-hidden">
+
+      {/* Main Content Area */}
+      <main className="flex-1 pt-14 md:pt-20 w-full max-w-7xl mx-auto px-0 md:px-6 lg:px-8">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={location.pathname}
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="w-full flex-1 flex flex-col"
           >
             <Outlet />
           </motion.div>
         </AnimatePresence>
+      </main>
+
+      {/* Desktop Footer (Hidden on Mobile App View) */}
+      <div className="hidden md:block">
+        <Footer />
       </div>
+
+      {/* Mobile Floating Bottom App Bar */}
       <BottomNavBar />
+      
+      {/* Login Modal / Bottom Sheet */}
       <CustomerLoginModal />
     </div>
   );

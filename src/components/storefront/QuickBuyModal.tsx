@@ -8,11 +8,8 @@ import { useStoreConfig } from '../../context/StoreConfigContext';
 import { Coupon, getCoupons } from '../../services/couponService';
 import { 
   X, 
-  ShoppingBag, 
   Tag, 
-  Phone, 
   MapPin, 
-  User, 
   Plus, 
   Minus, 
   Loader2, 
@@ -41,17 +38,13 @@ export function QuickBuyModal({ isOpen, onClose, product }: QuickBuyModalProps) 
   const navigate = useNavigate();
   const { formatPrice } = useCart();
 
-  // Settings
   const [settings, setSettings] = useState<GeneralSettings | null>(null);
-  
   const [availableCoupons, setAvailableCoupons] = useState<Coupon[]>([]);
 
-  // Selection states
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [quantity, setQuantity] = useState<number>(1);
 
-  // Delivery details form
   const [customer, setCustomer] = useState({
     name: '',
     whatsapp: '',
@@ -60,20 +53,16 @@ export function QuickBuyModal({ isOpen, onClose, product }: QuickBuyModalProps) 
     pincode: ''
   });
 
-  // Coupons states
   const [couponCode, setCouponCode] = useState<string>('');
   const [discount, setDiscount] = useState<number>(0);
   const [couponError, setCouponError] = useState<string | null>(null);
   const [couponSuccess, setCouponSuccess] = useState<string | null>(null);
 
-  // Statuses
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Fetch settings & coupons & check localStorage for saved details
   useEffect(() => {
     if (isOpen) {
-      // Set defaults for size and color
       if (product) {
         setSelectedSize(product.sizes?.[0] || '');
         setSelectedColor(product.colors?.[0] || '');
@@ -85,7 +74,6 @@ export function QuickBuyModal({ isOpen, onClose, product }: QuickBuyModalProps) 
         setErrorMsg(null);
       }
 
-      // Load saved details
       try {
         const saved = localStorage.getItem('saved_customer_details');
         if (saved) {
@@ -96,23 +84,20 @@ export function QuickBuyModal({ isOpen, onClose, product }: QuickBuyModalProps) 
       }
 
       getGeneralSettings().then(setSettings).catch(console.error);
-      
       getCoupons().then(coupons => {
         setAvailableCoupons(coupons.filter(c => c.active !== false));
       }).catch(console.error);
     }
   }, [isOpen, product]);
 
-  // Pricing calculations
   const subtotal = useMemo(() => {
     if (!product) return 0;
     return product.price * quantity;
   }, [product, quantity]);
 
-  const tax = useMemo(() => subtotal * 0.05, [subtotal]); // 5% matching checkout
+  const tax = useMemo(() => subtotal * 0.05, [subtotal]);
   const total = useMemo(() => Math.max(0, subtotal + tax - discount), [subtotal, tax, discount]);
 
-  // Apply Coupon Logic
   const handleApplyCoupon = async (codeToApply: string) => {
     setCouponError(null);
     setCouponSuccess(null);
@@ -140,7 +125,7 @@ export function QuickBuyModal({ isOpen, onClose, product }: QuickBuyModalProps) 
 
       if (coupon.minOrderValue && subtotal < coupon.minOrderValue) {
         setDiscount(0);
-        setCouponError(`This coupon requires a minimum order value of ${formatPrice(coupon.minOrderValue)}.`);
+        setCouponError(`Requires min order of ${formatPrice(coupon.minOrderValue)}.`);
         return;
       }
 
@@ -152,7 +137,7 @@ export function QuickBuyModal({ isOpen, onClose, product }: QuickBuyModalProps) 
       }
 
       setDiscount(calculatedDiscount);
-      setCouponSuccess(`Success! Coupon "${coupon.code}" applied: -${formatPrice(calculatedDiscount)}`);
+      setCouponSuccess(`Coupon "${coupon.code}" applied: -${formatPrice(calculatedDiscount)}`);
     } catch (err) {
       console.error('Error applying coupon', err);
       setCouponError('Error verifying coupon.');
@@ -173,7 +158,6 @@ export function QuickBuyModal({ isOpen, onClose, product }: QuickBuyModalProps) 
     setIsSubmitting(true);
 
     try {
-      // Build order item
       const item = {
         productId: String(product.id),
         title: product.title,
@@ -195,13 +179,9 @@ export function QuickBuyModal({ isOpen, onClose, product }: QuickBuyModalProps) 
         createdAt: new Date().toISOString()
       };
 
-      // Add order
       const orderId = await addOrder(orderData);
-
-      // Save customer details in localStorage
       localStorage.setItem('saved_customer_details', JSON.stringify(customer));
 
-      // Build WhatsApp payload
       const storePhone = settings?.whatsappNumber?.replace(/[^0-9]/g, '') || "1234567890";
       const currentStoreName = storeSettings?.storeName || "My Store";
       const intro = `Hello, I'd like to place an order on ${currentStoreName}!%0AOrder ID: ${orderId}%0A%0A*⚡ QUICK BUY ORDER:*%0A*Customer Details:*%0AName: ${customer.name}%0APhone: ${customer.whatsapp}%0AAddress: ${customer.address}, ${customer.city} - ${customer.pincode}%0A%0A*Order Item:*%0A`;
@@ -222,7 +202,7 @@ export function QuickBuyModal({ isOpen, onClose, product }: QuickBuyModalProps) 
       navigate('/checkout', { state: { order: completedOrder, orderId, whatsappUrl: url } });
     } catch (err) {
       console.error('Error placing order', err);
-      setErrorMsg('There was an error compiling your order. Please try again.');
+      setErrorMsg('Error compiling order. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -232,47 +212,50 @@ export function QuickBuyModal({ isOpen, onClose, product }: QuickBuyModalProps) 
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4">
-        {/* Backdrop */}
+      <div className="fixed inset-0 z-50 overflow-hidden flex items-end md:items-center justify-center p-0 md:p-4">
+        
+        {/* Dark Backdrop */}
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-black/60 backdrop-blur-xs"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm"
         />
 
-        {/* Modal Window */}
+        {/* Responsive Sheet (Bottom-Sheet on Mobile, Modal on Desktop) */}
         <motion.div 
-          initial={{ opacity: 0, scale: 0.95, y: 15 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 15 }}
-          className="relative bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl border border-outline-variant/20 flex flex-col z-10 text-left"
+          initial={{ y: "100%", opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: "100%", opacity: 0 }}
+          transition={{ type: "spring", damping: 25, stiffness: 300 }}
+          className="relative bg-white dark:bg-slate-900 rounded-t-3xl md:rounded-3xl w-full max-w-2xl max-h-[85vh] md:max-h-[90vh] overflow-y-auto shadow-2xl border border-neutral-200/80 dark:border-slate-800 flex flex-col z-10 text-left"
         >
+          {/* Mobile Bottom-Sheet Grab Handle */}
+          <div className="w-12 h-1.5 bg-neutral-300 dark:bg-slate-700 rounded-full mx-auto my-2 md:hidden" />
+
           {/* Header */}
-          <div className="p-6 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white z-10">
+          <div className="px-5 py-3 md:px-6 md:py-4 border-b border-neutral-100 dark:border-slate-800 flex items-center justify-between sticky top-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md z-10">
             <div className="flex items-center gap-2">
-              <span className="flex h-2.5 w-2.5 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-              </span>
-              <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                <Truck size={20} className="text-primary" />
-                Direct Quick Buy Checkout
+              <div className="p-1.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg">
+                <Truck className="w-4 h-4 md:w-5 md:h-5" />
+              </div>
+              <h2 className="text-sm md:text-lg font-extrabold text-neutral-900 dark:text-white tracking-tight">
+                Direct WhatsApp Quick Buy
               </h2>
             </div>
             <button 
               onClick={onClose}
-              className="p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors"
+              className="p-1.5 rounded-full hover:bg-neutral-100 dark:hover:bg-slate-800 text-neutral-400 hover:text-neutral-700 transition-colors"
             >
-              <X size={20} />
+              <X className="w-5 h-5" />
             </button>
           </div>
 
-          <div className="p-6 overflow-y-auto space-y-6">
-            {/* Product Overview Section */}
-            <div className="flex flex-col sm:flex-row gap-5 bg-neutral-50 p-4 rounded-2xl border border-neutral-100">
-              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl bg-white border border-neutral-200/50 p-2 flex-shrink-0 flex items-center justify-center overflow-hidden">
+          <div className="p-4 md:p-6 overflow-y-auto space-y-5">
+            {/* Product Overview Summary */}
+            <div className="flex gap-3.5 bg-neutral-50 dark:bg-slate-800/50 p-3 md:p-4 rounded-2xl border border-neutral-200/60 dark:border-slate-700/60">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-white dark:bg-slate-900 border border-neutral-200/60 dark:border-slate-700 p-1.5 flex-shrink-0 flex items-center justify-center overflow-hidden">
                 <img 
                   src={product.image} 
                   alt={product.title} 
@@ -282,46 +265,46 @@ export function QuickBuyModal({ isOpen, onClose, product }: QuickBuyModalProps) 
               </div>
               <div className="flex-1 flex flex-col justify-between">
                 <div>
-                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest">{product.category}</span>
-                  <h3 className="font-bold text-base text-gray-900 leading-snug mt-0.5">{product.title}</h3>
+                  <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">{product.category}</span>
+                  <h3 className="font-bold text-xs md:text-sm text-neutral-900 dark:text-white leading-snug mt-0.5 line-clamp-2">{product.title}</h3>
                 </div>
-                <div className="flex items-baseline gap-2 mt-2">
-                  <span className="text-xl font-black text-primary font-space">
+                <div className="flex items-baseline gap-2 mt-1">
+                  <span className="text-base md:text-xl font-extrabold text-neutral-900 dark:text-white">
                     {formatPrice(product.price)}
                   </span>
-                  <span className="text-xs text-gray-400 font-mono">per unit</span>
+                  <span className="text-[10px] text-neutral-400">per item</span>
                 </div>
               </div>
             </div>
 
             {/* Error alerts */}
             {errorMsg && (
-              <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold rounded-xl flex items-center gap-2.5">
-                <AlertCircle size={16} className="text-rose-500 flex-shrink-0" />
+              <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-xs font-semibold rounded-xl flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-500 flex-shrink-0" />
                 <span>{errorMsg}</span>
               </div>
             )}
 
-            {/* Selection Form */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Options Selection Form */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-4">
                 {/* Variant selection */}
                 {product.colors && product.colors.length > 0 && (
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1.5">Color Option</label>
-                    <div className="flex flex-wrap gap-2">
+                    <label className="block text-[11px] font-bold text-neutral-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">Color</label>
+                    <div className="flex flex-wrap gap-1.5">
                       {product.colors.map(color => (
                         <button
                           key={color}
                           type="button"
                           onClick={() => setSelectedColor(color)}
-                          className={`h-9 px-3.5 rounded-lg border text-xs font-bold transition-all flex items-center gap-1.5
+                          className={`h-8 px-3 rounded-lg border text-xs font-bold transition-all flex items-center gap-1.5
                             ${selectedColor === color 
-                              ? 'border-primary text-primary bg-primary/5 ring-1 ring-primary' 
-                              : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}
+                              ? 'border-emerald-500 text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 ring-1 ring-emerald-500' 
+                              : 'border-neutral-200 dark:border-slate-700 text-neutral-600 dark:text-slate-300'}`}
                         >
                           {color.startsWith('#') && (
-                            <span className="w-3 h-3 rounded-full border border-gray-200" style={{ backgroundColor: color }} />
+                            <span className="w-2.5 h-2.5 rounded-full border border-neutral-300" style={{ backgroundColor: color }} />
                           )}
                           <span>{color}</span>
                         </button>
@@ -332,17 +315,17 @@ export function QuickBuyModal({ isOpen, onClose, product }: QuickBuyModalProps) 
 
                 {product.sizes && product.sizes.length > 0 && (
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1.5">Size Selection</label>
-                    <div className="flex flex-wrap gap-2">
+                    <label className="block text-[11px] font-bold text-neutral-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">Size</label>
+                    <div className="flex flex-wrap gap-1.5">
                       {product.sizes.map(size => (
                         <button
                           key={size}
                           type="button"
                           onClick={() => setSelectedSize(size)}
-                          className={`h-9 px-4.5 rounded-lg border text-xs font-bold transition-all flex items-center justify-center
+                          className={`h-8 px-3.5 rounded-lg border text-xs font-bold transition-all flex items-center justify-center
                             ${selectedSize === size 
-                              ? 'border-primary text-primary bg-primary/5 ring-1 ring-primary' 
-                              : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}
+                              ? 'border-emerald-500 text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 ring-1 ring-emerald-500' 
+                              : 'border-neutral-200 dark:border-slate-700 text-neutral-600 dark:text-slate-300'}`}
                         >
                           {size}
                         </button>
@@ -353,69 +336,63 @@ export function QuickBuyModal({ isOpen, onClose, product }: QuickBuyModalProps) 
 
                 {/* Quantity Incrementor */}
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1.5">Quantity</label>
-                  <div className="flex items-center gap-3 bg-gray-100 w-max p-1 rounded-xl border border-gray-200/40">
+                  <label className="block text-[11px] font-bold text-neutral-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">Quantity</label>
+                  <div className="flex items-center gap-3 bg-neutral-100 dark:bg-slate-800 w-max p-1 rounded-xl border border-neutral-200/60 dark:border-slate-700">
                     <button
                       type="button"
                       onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
                       disabled={quantity <= 1}
-                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white text-gray-600 transition-all font-bold active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed disabled:pointer-events-none"
+                      className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white dark:hover:bg-slate-700 text-neutral-600 dark:text-slate-200 transition-all font-bold active:scale-95 disabled:opacity-30"
                     >
-                      <Minus size={14} />
+                      <Minus className="w-3.5 h-3.5" />
                     </button>
-                    <span className="w-8 text-center font-mono font-bold text-sm text-gray-800">
+                    <span className="w-6 text-center font-mono font-bold text-xs text-neutral-800 dark:text-white">
                       {quantity}
                     </span>
                     <button
                       type="button"
                       onClick={() => setQuantity(prev => Math.min(99, prev + 1))}
                       disabled={quantity >= 99}
-                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white text-gray-600 transition-all font-bold active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed disabled:pointer-events-none"
+                      className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white dark:hover:bg-slate-700 text-neutral-600 dark:text-slate-200 transition-all font-bold active:scale-95 disabled:opacity-30"
                     >
-                      <Plus size={14} />
+                      <Plus className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
               </div>
 
               {/* Delivery Details Form */}
-              <div className="bg-neutral-50/50 p-4.5 rounded-2xl border border-gray-100 space-y-3.5">
-                <h4 className="text-xs font-bold text-gray-800 uppercase tracking-wider flex items-center gap-1.5 mb-2">
-                  <MapPin size={14} className="text-primary" />
-                  Delivery Destination
+              <div className="bg-neutral-50 dark:bg-slate-800/40 p-3.5 md:p-4 rounded-2xl border border-neutral-200/60 dark:border-slate-700/60 space-y-2.5">
+                <h4 className="text-[11px] font-bold text-neutral-800 dark:text-slate-200 uppercase tracking-wider flex items-center gap-1.5 mb-1">
+                  <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+                  Shipping Destination
                 </h4>
 
-                <div className="space-y-3">
-                  <div>
-                    <input 
-                      type="text" 
-                      required
-                      value={customer.name}
-                      onChange={e => setCustomer({...customer, name: e.target.value})}
-                      placeholder="Receiver's Full Name"
-                      className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all"
-                    />
-                  </div>
-                  <div>
-                    <input 
-                      type="tel" 
-                      required
-                      value={customer.whatsapp}
-                      onChange={e => setCustomer({...customer, whatsapp: e.target.value})}
-                      placeholder="WhatsApp Mobile Number (e.g., +1...)"
-                      className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all"
-                    />
-                  </div>
-                  <div>
-                    <input 
-                      type="text" 
-                      required
-                      value={customer.address}
-                      onChange={e => setCustomer({...customer, address: e.target.value})}
-                      placeholder="Street Address, Appt/Suite"
-                      className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all"
-                    />
-                  </div>
+                <div className="space-y-2.5">
+                  <input 
+                    type="text" 
+                    required
+                    value={customer.name}
+                    onChange={e => setCustomer({...customer, name: e.target.value})}
+                    placeholder="Full Name"
+                    className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-neutral-200 dark:border-slate-700 rounded-xl text-xs outline-none focus:ring-1 focus:ring-emerald-500 text-neutral-900 dark:text-white"
+                  />
+                  <input 
+                    type="tel" 
+                    required
+                    value={customer.whatsapp}
+                    onChange={e => setCustomer({...customer, whatsapp: e.target.value})}
+                    placeholder="WhatsApp Number"
+                    className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-neutral-200 dark:border-slate-700 rounded-xl text-xs outline-none focus:ring-1 focus:ring-emerald-500 text-neutral-900 dark:text-white"
+                  />
+                  <input 
+                    type="text" 
+                    required
+                    value={customer.address}
+                    onChange={e => setCustomer({...customer, address: e.target.value})}
+                    placeholder="Street Address, House No."
+                    className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-neutral-200 dark:border-slate-700 rounded-xl text-xs outline-none focus:ring-1 focus:ring-emerald-500 text-neutral-900 dark:text-white"
+                  />
                   <div className="grid grid-cols-2 gap-2">
                     <input 
                       type="text" 
@@ -423,7 +400,7 @@ export function QuickBuyModal({ isOpen, onClose, product }: QuickBuyModalProps) 
                       value={customer.city}
                       onChange={e => setCustomer({...customer, city: e.target.value})}
                       placeholder="City"
-                      className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all"
+                      className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-neutral-200 dark:border-slate-700 rounded-xl text-xs outline-none focus:ring-1 focus:ring-emerald-500 text-neutral-900 dark:text-white"
                     />
                     <input 
                       type="text" 
@@ -431,119 +408,80 @@ export function QuickBuyModal({ isOpen, onClose, product }: QuickBuyModalProps) 
                       value={customer.pincode}
                       onChange={e => setCustomer({...customer, pincode: e.target.value})}
                       placeholder="Pincode / ZIP"
-                      className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-lg text-xs outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all"
+                      className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-neutral-200 dark:border-slate-700 rounded-xl text-xs outline-none focus:ring-1 focus:ring-emerald-500 text-neutral-900 dark:text-white"
                     />
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Checkout Pricing Details / Coupons Section */}
-            <div className="pt-4 border-t border-gray-100 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Coupon code input */}
-              <div className="space-y-2.5">
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide">Promotional Coupon</label>
+            {/* Coupons & Price Summary */}
+            <div className="pt-3 border-t border-neutral-100 dark:border-slate-800 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="block text-[11px] font-bold text-neutral-700 dark:text-slate-300 uppercase tracking-wider">Coupon Code</label>
                 <div className="flex gap-2">
                   <input 
                     type="text" 
                     value={couponCode}
                     onChange={e => setCouponCode(e.target.value)}
-                    placeholder="Enter Code"
-                    className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs outline-none focus:bg-white uppercase focus:ring-1 focus:ring-primary transition-all"
+                    placeholder="Voucher Code"
+                    className="flex-1 px-3 py-1.5 bg-neutral-100 dark:bg-slate-800 border border-neutral-200 dark:border-slate-700 rounded-xl text-xs outline-none uppercase font-bold text-neutral-900 dark:text-white"
                   />
                   <button 
                     type="button"
                     onClick={() => handleApplyCoupon(couponCode)}
-                    className="px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-lg text-xs font-bold transition-all"
+                    className="px-3.5 py-1.5 bg-neutral-900 dark:bg-slate-700 text-white rounded-xl text-xs font-bold hover:bg-neutral-800"
                   >
                     Apply
                   </button>
                 </div>
-
-                {couponError && (
-                  <p className="text-[10px] text-rose-600 font-semibold flex items-center gap-1">
-                    <AlertCircle size={12} />
-                    {couponError}
-                  </p>
-                )}
-                {couponSuccess && (
-                  <p className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
-                    <CheckCircle size={12} />
-                    {couponSuccess}
-                  </p>
-                )}
-
-                {/* Dynamic coupon suggestion pills */}
-                {availableCoupons.length > 0 && (
-                  <div className="space-y-1">
-                    <p className="text-[9px] uppercase tracking-wider font-bold text-gray-400">Tap to apply available codes:</p>
-                    <div className="flex flex-wrap gap-1">
-                      {availableCoupons.map(coupon => (
-                        <button
-                          key={coupon.id}
-                          type="button"
-                          onClick={() => {
-                            setCouponCode(coupon.code);
-                            handleApplyCoupon(coupon.code);
-                          }}
-                          className="bg-primary/5 text-primary hover:bg-primary/10 border border-primary/20 text-[9px] font-bold px-2 py-0.5 rounded transition-all flex items-center gap-1"
-                        >
-                          <Tag size={10} />
-                          {coupon.code}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                {couponError && <p className="text-[10px] text-rose-600 font-semibold">{couponError}</p>}
+                {couponSuccess && <p className="text-[10px] text-emerald-600 font-semibold">{couponSuccess}</p>}
               </div>
 
-              {/* Price calculations */}
-              <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex flex-col justify-center space-y-2">
-                <div className="flex justify-between items-center text-xs text-gray-500">
-                  <span>Subtotal ({quantity} {quantity === 1 ? 'item' : 'items'}):</span>
-                  <span className="font-semibold">{formatPrice(subtotal)}</span>
-                </div>
-                <div className="flex justify-between items-center text-xs text-gray-500">
-                  <span>Est. GST / Tax (5%):</span>
-                  <span className="font-semibold">{formatPrice(tax)}</span>
+              {/* Price Breakdown */}
+              <div className="bg-neutral-50 dark:bg-slate-800/40 p-3 rounded-2xl border border-neutral-200/60 dark:border-slate-700/60 space-y-1 text-xs">
+                <div className="flex justify-between text-neutral-500">
+                  <span>Subtotal:</span>
+                  <span className="font-semibold text-neutral-800 dark:text-slate-200">{formatPrice(subtotal)}</span>
                 </div>
                 {discount > 0 && (
-                  <div className="flex justify-between items-center text-xs text-emerald-600 font-bold">
-                    <span>Coupon Discount:</span>
+                  <div className="flex justify-between text-emerald-600 font-bold">
+                    <span>Discount:</span>
                     <span>-{formatPrice(discount)}</span>
                   </div>
                 )}
-                <div className="pt-2 border-t border-dashed border-gray-200 flex justify-between items-center text-sm">
-                  <span className="font-black text-gray-900 uppercase">Grand Total:</span>
-                  <span className="font-black text-primary text-base">{formatPrice(total)}</span>
+                <div className="pt-1.5 border-t border-dashed border-neutral-200 dark:border-slate-700 flex justify-between items-center">
+                  <span className="font-extrabold text-neutral-900 dark:text-white">Total:</span>
+                  <span className="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm">{formatPrice(total)}</span>
                 </div>
               </div>
             </div>
 
-            {/* Actions Bar */}
-            <div className="pt-6 border-t border-gray-100 flex flex-col sm:flex-row gap-3">
+            {/* Action Bar */}
+            <div className="pt-3 border-t border-neutral-100 dark:border-slate-800 flex flex-col sm:flex-row gap-2.5">
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 py-3 border border-gray-200 hover:bg-gray-50 hover:scale-[1.01] active:scale-[0.97] text-gray-600 text-xs font-bold rounded-xl transition-all duration-200"
+                className="flex-1 py-2.5 border border-neutral-200 dark:border-slate-700 text-neutral-600 dark:text-slate-300 text-xs font-bold rounded-xl active:scale-95 transition-all"
               >
-                Close & Keep Shopping
+                Close
               </button>
               <button
                 type="button"
                 onClick={submitOrder}
                 disabled={isSubmitting}
-                className="flex-1 bg-green-500 hover:bg-green-600 disabled:opacity-50 text-white py-3 rounded-xl text-xs font-bold tracking-widest uppercase shadow-md hover:shadow-lg hover:scale-[1.01] hover:-translate-y-0.5 active:scale-[0.97] active:translate-y-0 transition-all duration-200 flex items-center justify-center gap-1.5"
+                className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-wide shadow-md shadow-emerald-600/30 active:scale-95 transition-all flex items-center justify-center gap-1.5"
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 size={14} className="animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin" />
                     <span>Processing...</span>
                   </>
                 ) : (
                   <>
-                    <MessageSquare size={14} />
-                    <span>⚡ Order via WhatsApp</span>
+                    <MessageSquare className="w-4 h-4" />
+                    <span>Order via WhatsApp</span>
                   </>
                 )}
               </button>

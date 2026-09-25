@@ -166,7 +166,7 @@ export function StorefrontProduct() {
         />
       )}
 
-      <div className="max-w-7xl mx-auto px-3 md:px-6 pt-3 md:pt-6">
+      <div className="max-w-7xl mx-auto px-2 md:px-6 pt-2 md:pt-6">
         
         {/* Breadcrumb Navigation */}
         <div className="mb-4 text-xs font-semibold text-neutral-400 flex items-center gap-1 overflow-x-auto whitespace-nowrap no-scrollbar">

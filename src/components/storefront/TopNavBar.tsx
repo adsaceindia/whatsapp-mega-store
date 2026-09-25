@@ -60,7 +60,7 @@ export function TopNavBar() {
 
   return (
     <header className="fixed top-0 inset-x-0 h-14 md:h-20 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-neutral-200/60 dark:border-slate-800/80 z-40 transition-all">
-      <div className="max-w-7xl mx-auto h-full px-4 md:px-8 flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto h-full px-2.5 md:px-8 flex items-center justify-between gap-2 md:gap-4">
         
         {/* Left Brand Area (Mobile App Header + Desktop Web Header) */}
         <div className="flex items-center gap-3">

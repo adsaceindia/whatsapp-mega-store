@@ -153,8 +153,8 @@ export function StorefrontHome() {
       )}
 
       {/* 1. App-Style Category Story Circles (Instagram/Swiggy Style) */}
-      <section className="bg-white dark:bg-slate-900 border-b border-neutral-200/60 dark:border-slate-800 py-3 px-3 overflow-x-auto no-scrollbar shadow-xs">
-        <div className="flex items-center gap-4 min-w-max mx-auto max-w-7xl">
+      <section className="bg-white dark:bg-slate-900 border-b border-neutral-200/60 dark:border-slate-800 py-2.5 px-2 md:px-4 overflow-x-auto no-scrollbar shadow-xs">
+        <div className="flex items-center gap-3 md:gap-4 min-w-max mx-auto max-w-7xl">
           {categoryNames.map((cat, idx) => {
             const dbCat = dbCategories.find(c => c.name === cat);
             const catProduct = products.find(p => p.category === cat);
@@ -164,14 +164,14 @@ export function StorefrontHome() {
             return (
               <div 
                 key={cat}
-                className="flex flex-col items-center gap-1.5 cursor-pointer group active:scale-95 transition-transform"
+                className="flex flex-col items-center gap-1 cursor-pointer group active:scale-95 transition-transform"
                 onClick={() => {
                   setSelectedCategory(cat);
                   navigate('/categories', { state: { category: cat } });
                 }}
               >
                 {/* Glowing Avatar Ring */}
-                <div className={`w-14 h-14 md:w-16 md:h-16 rounded-full p-0.5 transition-all duration-300 ${
+                <div className={`w-13 h-13 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full p-0.5 transition-all duration-300 ${
                   isSelected 
                     ? 'bg-gradient-to-tr from-emerald-500 to-teal-400 shadow-md shadow-emerald-500/30 scale-105' 
                     : 'bg-gradient-to-tr from-emerald-600/30 via-neutral-200 to-teal-500/30 dark:from-slate-700 dark:to-slate-600 group-hover:scale-105'
@@ -185,7 +185,7 @@ export function StorefrontHome() {
                   </div>
                 </div>
 
-                <span className={`text-[10px] md:text-xs font-semibold max-w-[70px] truncate text-center transition-colors ${
+                <span className={`text-[10px] md:text-xs font-semibold max-w-[65px] sm:max-w-[70px] truncate text-center transition-colors ${
                   isSelected ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-neutral-700 dark:text-slate-300 group-hover:text-emerald-600'
                 }`}>
                   {cat}
@@ -197,11 +197,11 @@ export function StorefrontHome() {
       </section>
 
       {/* 2. Hero Carousel Slider */}
-      <section className="max-w-7xl mx-auto px-3 md:px-6 mt-3 md:mt-6">
+      <section className="w-full max-w-7xl mx-auto px-0 sm:px-3 md:px-6 mt-0 sm:mt-3 md:mt-6">
         {loadingBanners ? (
           <SkeletonBanner />
         ) : activeBanners.length > 0 ? (
-          <div className="relative w-full h-[160px] sm:h-[280px] md:h-[380px] lg:h-[440px] rounded-2xl md:rounded-3xl overflow-hidden shadow-lg group">
+          <div className="relative w-full h-[180px] sm:h-[280px] md:h-[380px] lg:h-[440px] rounded-none sm:rounded-2xl md:rounded-3xl overflow-hidden shadow-lg group">
             {activeBanners.map((banner, index) => (
               <div 
                 key={banner.id}
@@ -269,16 +269,16 @@ export function StorefrontHome() {
 
       {/* 3. Spotlight Coupon Alert Bar (If Available) */}
       {spotlightCoupon && (
-        <section className="max-w-7xl mx-auto px-3 md:px-6 mt-4">
-          <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white rounded-2xl p-3 md:p-4 shadow-md flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center flex-shrink-0">
-                <Tag className="w-4 h-4 text-white animate-pulse" />
+        <section className="max-w-7xl mx-auto px-2 md:px-6 mt-3 sm:mt-4">
+          <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white rounded-xl md:rounded-2xl p-2.5 sm:p-3 md:p-4 shadow-md flex items-center justify-between gap-2.5">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center flex-shrink-0">
+                <Tag className="w-3.5 h-3.5 md:w-4 md:h-4 text-white animate-pulse" />
               </div>
               <div>
-                <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-200">Exclusive Voucher Code</span>
-                <p className="text-xs md:text-sm font-extrabold tracking-tight">
-                  Use code <span className="bg-white/20 px-2 py-0.5 rounded font-mono text-emerald-100 border border-white/30">{spotlightCoupon.code}</span> for instant discount!
+                <span className="text-[9px] md:text-[10px] uppercase font-bold tracking-widest text-emerald-200">Exclusive Voucher Code</span>
+                <p className="text-[11px] sm:text-xs md:text-sm font-extrabold tracking-tight">
+                  Use code <span className="bg-white/20 px-1.5 py-0.5 rounded font-mono text-emerald-100 border border-white/30">{spotlightCoupon.code}</span> for instant discount!
                 </p>
               </div>
             </div>
@@ -287,7 +287,7 @@ export function StorefrontHome() {
                 navigator.clipboard.writeText(spotlightCoupon.code);
                 triggerToast(`Copied code "${spotlightCoupon.code}"!`);
               }}
-              className="bg-white text-emerald-800 px-3 py-1.5 rounded-xl font-bold text-xs hover:bg-emerald-50 active:scale-95 transition-all flex-shrink-0 shadow-sm"
+              className="bg-white text-emerald-800 px-2.5 py-1 md:px-3 md:py-1.5 rounded-lg md:rounded-xl font-bold text-[11px] md:text-xs hover:bg-emerald-50 active:scale-95 transition-all flex-shrink-0 shadow-sm"
             >
               Copy Code
             </button>
@@ -297,10 +297,10 @@ export function StorefrontHome() {
 
       {/* 4. Horizontal Spotlight Products Reel (Flash Deals) */}
       {spotlightProducts.length > 0 && (
-        <section className="max-w-7xl mx-auto px-3 md:px-6 mt-6">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-rose-500/10 text-rose-500 rounded-lg">
+        <section className="max-w-7xl mx-auto px-2 md:px-6 mt-4 sm:mt-6">
+          <div className="flex items-center justify-between mb-2.5">
+            <div className="flex items-center gap-1.5">
+              <div className="p-1 bg-rose-500/10 text-rose-500 rounded-lg">
                 <Flame className="w-4 h-4 animate-bounce" />
               </div>
               <h2 className="text-sm md:text-lg font-extrabold text-neutral-900 dark:text-white tracking-tight">
@@ -316,9 +316,9 @@ export function StorefrontHome() {
             </button>
           </div>
 
-          <div className="flex gap-3 md:gap-4 overflow-x-auto no-scrollbar pb-2 -mx-3 px-3 md:mx-0 md:px-0">
+          <div className="flex gap-2.5 md:gap-4 overflow-x-auto no-scrollbar pb-2 -mx-2 px-2 md:mx-0 md:px-0">
             {spotlightProducts.map((p) => (
-              <div key={p.id} className="w-[170px] sm:w-[220px] md:w-[240px] flex-shrink-0">
+              <div key={p.id} className="w-[155px] sm:w-[210px] md:w-[240px] flex-shrink-0">
                 <ProductGridItem 
                   product={p} 
                   triggerToast={triggerToast} 
@@ -331,9 +331,9 @@ export function StorefrontHome() {
       )}
 
       {/* 5. Sticky Category Filter Pill Bar */}
-      <section className="sticky top-14 md:top-20 z-30 bg-neutral-50/95 dark:bg-slate-950/95 backdrop-blur-md py-3 border-y border-neutral-200/50 dark:border-slate-800 mt-6 shadow-xs">
-        <div className="max-w-7xl mx-auto px-3 md:px-6 flex items-center gap-2 overflow-x-auto no-scrollbar">
-          <span className="text-xs font-bold text-neutral-400 dark:text-slate-500 flex items-center gap-1 mr-1 flex-shrink-0">
+      <section className="sticky top-14 md:top-20 z-30 bg-neutral-50/95 dark:bg-slate-950/95 backdrop-blur-md py-2 border-y border-neutral-200/50 dark:border-slate-800 mt-4 sm:mt-6 shadow-xs">
+        <div className="max-w-7xl mx-auto px-2 md:px-6 flex items-center gap-1.5 md:gap-2 overflow-x-auto no-scrollbar">
+          <span className="text-[11px] md:text-xs font-bold text-neutral-400 dark:text-slate-500 flex items-center gap-1 mr-0.5 flex-shrink-0">
             <Layers className="w-3.5 h-3.5" /> Filter:
           </span>
           {allCategories.map((cat) => {
@@ -342,7 +342,7 @@ export function StorefrontHome() {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 flex-shrink-0 active:scale-95 ${
+                className={`px-3 py-1 md:px-3.5 md:py-1.5 rounded-full text-xs font-bold transition-all duration-200 flex-shrink-0 active:scale-95 ${
                   isSelected
                     ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
                     : 'bg-white dark:bg-slate-900 text-neutral-700 dark:text-slate-300 border border-neutral-200/80 dark:border-slate-800 hover:border-emerald-500'
@@ -356,13 +356,13 @@ export function StorefrontHome() {
       </section>
 
       {/* 6. Main Product Feed Grid */}
-      <section className="max-w-7xl mx-auto px-3 md:px-6 mt-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base md:text-xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
+      <section className="max-w-7xl mx-auto px-2 md:px-6 mt-4 sm:mt-6">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm md:text-xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
             {selectedCategory === 'All' ? 'Curated Catalog' : `${selectedCategory} Products`}
           </h2>
-          <span className="text-xs font-semibold text-neutral-400">
-            Showing {filteredProducts.length} items
+          <span className="text-[11px] md:text-xs font-semibold text-neutral-400">
+            {filteredProducts.length} items
           </span>
         </div>
 
@@ -375,7 +375,7 @@ export function StorefrontHome() {
             <p className="text-xs text-neutral-500">Try selecting another category filter above.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 md:gap-6">
             {filteredProducts.map((product) => (
               <ProductGridItem 
                 key={product.id || product.title} 
@@ -389,12 +389,12 @@ export function StorefrontHome() {
       </section>
 
       {/* 7. Reviews & Customer Feedback */}
-      <section className="max-w-7xl mx-auto px-3 md:px-6 mt-12">
+      <section className="max-w-7xl mx-auto px-2 md:px-6 mt-8 sm:mt-12">
         <TestimonialsSection products={products} orders={orders} />
       </section>
 
       {/* 8. FAQ Section */}
-      <section className="max-w-7xl mx-auto px-3 md:px-6 mt-8">
+      <section className="max-w-7xl mx-auto px-2 md:px-6 mt-6 sm:mt-8">
         <FAQSection />
       </section>
 

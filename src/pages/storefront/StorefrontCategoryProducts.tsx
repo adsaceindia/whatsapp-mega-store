@@ -144,20 +144,20 @@ export function StorefrontCategoryProducts() {
         <meta name="twitter:description" content={pageDescription} />
       </Helmet>
       
-      <main className="flex-1 p-4 md:p-8 pb-24 overflow-hidden">
+      <main className="flex-1 p-2 md:p-8 pb-24 overflow-hidden">
         <Breadcrumbs segments={breadcrumbSegments} idPrefix="category-products-breadcrumbs" />
 
-        <div className="mb-8 flex items-center gap-4">
+        <div className="mb-6 flex items-center gap-3">
           <button onClick={() => navigate(-1)} className="p-2 hover:bg-surface-container-high rounded-full transition-colors flex items-center justify-center" title="Back">
             <span className="material-symbols-outlined">arrow_back</span>
           </button>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-on-surface mb-1">{formattedCategory}</h1>
-            <p className="text-base text-on-surface-variant max-w-[400px]">{products.length} Products Found</p>
+            <h1 className="text-xl md:text-3xl font-bold text-on-surface mb-0.5">{formattedCategory}</h1>
+            <p className="text-xs md:text-base text-on-surface-variant max-w-[400px]">{products.length} Products Found</p>
           </div>
         </div>
 
-        <section className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-10">
+        <section className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-4 md:gap-10">
           {products.map((product) => (
             <ProductGridItem key={product.id || product.title} product={product} triggerToast={triggerToast} />
           ))}

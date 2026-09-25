@@ -126,7 +126,7 @@ export function StorefrontCategories() {
         />
       )}
 
-      <div className="max-w-7xl mx-auto px-3 md:px-6 flex flex-col md:flex-row gap-6">
+      <div className="max-w-7xl mx-auto px-2 md:px-6 flex flex-col md:flex-row gap-6">
         
         {/* Desktop Sidebar Filter Card */}
         <div className="hidden md:block w-64 flex-shrink-0">
@@ -210,7 +210,7 @@ export function StorefrontCategories() {
           </div>
 
           {/* Product Feed Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 md:gap-5">
             {loading ? (
               [1, 2, 3, 4, 5, 6, 7, 8].map(i => <SkeletonProductCard key={i} />)
             ) : sortedProducts.length === 0 ? (

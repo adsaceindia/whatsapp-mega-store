@@ -60,74 +60,64 @@ export function TopNavBar() {
 
   return (
     <header className="fixed top-0 inset-x-0 h-14 md:h-20 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-neutral-200/60 dark:border-slate-800/80 z-40 transition-all">
-      <div className="max-w-7xl mx-auto h-full px-2.5 md:px-8 flex items-center justify-between gap-2 md:gap-4">
+      <div className="max-w-7xl mx-auto h-full px-3 md:px-8 flex items-center justify-between gap-2 md:gap-4 relative">
         
-        {/* Left Brand Area (Mobile App Header + Desktop Web Header) */}
-        <div className="flex items-center gap-3">
-          {/* Mobile App Menu Trigger */}
+        {/* Left Action / Menu Trigger */}
+        <div className="flex items-center gap-2">
           <button 
             onClick={() => setIsMobileDrawerOpen(true)}
-            className="p-1.5 -ml-1 text-neutral-700 dark:text-slate-200 hover:text-emerald-600 transition-transform active:scale-95 md:hidden"
-            title="Open App Drawer"
+            className="p-2 text-neutral-800 dark:text-slate-200 hover:text-[#DD8560] transition-colors active:scale-95"
+            title="Open Menu"
           >
             <Menu className="w-5 h-5" />
           </button>
-
-          {/* Logo & Store Identity */}
-          <Link to="/" className="flex items-center gap-2.5 group">
-            {storeSettings.storeIcon ? (
-              <img 
-                src={storeSettings.storeIcon} 
-                alt="Logo" 
-                className="w-8 h-8 md:w-9 md:h-9 object-contain rounded-xl shadow-xs border border-neutral-200/50 dark:border-slate-800 group-hover:scale-105 transition-transform" 
-              />
-            ) : (
-              <div className="w-8 h-8 md:w-9 md:h-9 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
-                <Sparkles className="w-4 h-4 md:w-5 md:h-5" />
-              </div>
-            )}
-
-            {(storeSettings.showStoreName !== false || !storeSettings.storeIcon) && (
-              <div className="flex flex-col">
-                <span className="font-bold text-sm md:text-lg text-neutral-900 dark:text-white tracking-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate max-w-[130px] sm:max-w-[200px] md:max-w-[260px]">
-                  {storeSettings.storeName}
-                </span>
-                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold tracking-wide hidden sm:block">
-                  Verified WhatsApp Store
-                </span>
-              </div>
-            )}
-          </Link>
         </div>
 
+        {/* Center Logo & Open Fashion Luxury Identity */}
+        <Link to="/" className="flex items-center gap-2 group mx-auto">
+          {storeSettings.storeIcon ? (
+            <img 
+              src={storeSettings.storeIcon} 
+              alt="Logo" 
+              className="w-7 h-7 md:w-8 md:h-8 object-contain rounded-full shadow-xs border border-neutral-200/50 dark:border-slate-800" 
+            />
+          ) : null}
+
+          {(storeSettings.showStoreName !== false || !storeSettings.storeIcon) && (
+            <span className="font-tenor tracking-luxury text-sm sm:text-base md:text-xl font-normal text-neutral-900 dark:text-white uppercase transition-colors hover:text-[#DD8560] truncate max-w-[170px] sm:max-w-[260px]">
+              {storeSettings.storeName || 'OPEN FASHION'}
+            </span>
+          )}
+        </Link>
+
         {/* Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-6 ml-8">
+        <nav className="hidden lg:flex items-center gap-8 text-xs font-medium tracking-widest uppercase">
           <Link 
             to="/" 
-            className="text-sm font-semibold text-neutral-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+            className="text-neutral-800 dark:text-slate-200 hover:text-[#DD8560] transition-colors font-tenor"
           >
             Home
           </Link>
           <Link 
             to="/categories" 
-            className="text-sm font-semibold text-neutral-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+            className="text-neutral-800 dark:text-slate-200 hover:text-[#DD8560] transition-colors font-tenor"
           >
-            Categories
+            Apparel
           </Link>
           {menuItems.map(item => (
             <Link
               key={item.id}
               to={item.link}
-              className="text-sm font-semibold text-neutral-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+              className="text-neutral-800 dark:text-slate-200 hover:text-[#DD8560] transition-colors font-tenor"
             >
               {item.label}
             </Link>
           ))}
           <Link 
             to="/track" 
-            className="text-sm font-semibold text-neutral-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+            className="text-neutral-500 dark:text-slate-400 hover:text-[#DD8560] transition-colors font-tenor"
           >
-            Track Order
+            Track
           </Link>
         </nav>
 
@@ -195,39 +185,24 @@ export function TopNavBar() {
             )}
           </div>
 
-          {/* Mobile Search Button (App View) */}
+          {/* Mobile Search Trigger */}
           <button 
             onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-            className="md:hidden p-2 text-neutral-700 dark:text-slate-200 hover:text-emerald-600 active:scale-95 transition-transform rounded-xl bg-neutral-100 dark:bg-slate-800"
+            className="p-2 text-neutral-800 dark:text-slate-200 hover:text-[#DD8560] active:scale-95 transition-transform"
             title="Search Store"
           >
-            <Search className="w-4 h-4" />
+            <Search className="w-5 h-5 stroke-[1.5]" />
           </button>
 
-          {/* Wishlist Shortcut */}
-          <Link
-            to="/cart"
-            className="relative p-2 text-neutral-700 dark:text-slate-200 hover:text-emerald-600 active:scale-95 transition-transform rounded-xl bg-neutral-100 dark:bg-slate-800 hidden sm:flex items-center justify-center"
-            title="Wishlist"
-          >
-            <Heart className="w-4 h-4" />
-            {wishlist && wishlist.length > 0 && (
-              <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[9px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900">
-                {wishlist.length}
-              </span>
-            )}
-          </Link>
-
-          {/* Desktop Cart Button */}
+          {/* Shopping Bag Button */}
           <Link 
             to="/cart"
-            className="hidden md:flex items-center gap-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white px-4 py-2 rounded-full font-bold text-xs shadow-md shadow-emerald-600/20 active:scale-95 transition-all"
-            title="Shopping Cart"
+            className="relative p-2 text-neutral-800 dark:text-slate-200 hover:text-[#DD8560] active:scale-95 transition-transform flex items-center justify-center"
+            title="Shopping Bag"
           >
-            <ShoppingBag className="w-4 h-4" />
-            <span>Bag</span>
+            <ShoppingBag className="w-5 h-5 stroke-[1.5]" />
             {cartCount > 0 && (
-              <span className="bg-white text-emerald-700 text-[11px] font-extrabold px-1.5 py-0.5 rounded-full">
+              <span className="absolute -top-1 -right-1 bg-[#DD8560] text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-xs">
                 {cartCount}
               </span>
             )}

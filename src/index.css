@@ -6,6 +6,7 @@
 :root {
   --font-sans: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-serif: "Playfair Display", Georgia, serif;
+  --font-tenor: "Tenor Sans", "Playfair Display", sans-serif;
   --font-space: "Space Grotesk", sans-serif;
 
   --inverse-surface: #2d3133;
@@ -430,5 +431,22 @@ html, body, #root {
   }
   .img-contain {
     @apply object-contain w-full h-full;
+  }
+
+  /* Open Fashion UI Kit Utilities */
+  .font-tenor {
+    font-family: var(--font-tenor), "Playfair Display", serif;
+  }
+  .tracking-luxury {
+    letter-spacing: 0.22em;
+  }
+  .text-fashion-accent {
+    color: #DD8560;
+  }
+  .bg-fashion-accent {
+    background-color: #DD8560;
+  }
+  .border-fashion-accent {
+    border-color: #DD8560;
   }
 }

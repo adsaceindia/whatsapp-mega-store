@@ -152,9 +152,9 @@ export function StorefrontHome() {
         />
       )}
 
-      {/* 1. App-Style Category Story Circles (Instagram/Swiggy Style) */}
-      <section className="bg-white dark:bg-slate-900 border-b border-neutral-200/60 dark:border-slate-800 py-2.5 px-2 md:px-4 overflow-x-auto no-scrollbar shadow-xs">
-        <div className="flex items-center gap-3 md:gap-4 min-w-max mx-auto max-w-7xl">
+      {/* 1. Open Fashion Category Reels */}
+      <section className="bg-white dark:bg-slate-900 border-b border-neutral-200/50 dark:border-slate-800/80 py-3 px-2 md:px-4 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-4 min-w-max mx-auto max-w-7xl justify-start sm:justify-center">
           {categoryNames.map((cat, idx) => {
             const dbCat = dbCategories.find(c => c.name === cat);
             const catProduct = products.find(p => p.category === cat);
@@ -164,19 +164,19 @@ export function StorefrontHome() {
             return (
               <div 
                 key={cat}
-                className="flex flex-col items-center gap-1 cursor-pointer group active:scale-95 transition-transform"
+                className="flex flex-col items-center gap-1.5 cursor-pointer group active:scale-95 transition-transform"
                 onClick={() => {
                   setSelectedCategory(cat);
                   navigate('/categories', { state: { category: cat } });
                 }}
               >
-                {/* Glowing Avatar Ring */}
-                <div className={`w-13 h-13 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full p-0.5 transition-all duration-300 ${
+                {/* Copper Avatar Ring */}
+                <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full p-0.5 transition-all duration-300 ${
                   isSelected 
-                    ? 'bg-gradient-to-tr from-emerald-500 to-teal-400 shadow-md shadow-emerald-500/30 scale-105' 
-                    : 'bg-gradient-to-tr from-emerald-600/30 via-neutral-200 to-teal-500/30 dark:from-slate-700 dark:to-slate-600 group-hover:scale-105'
+                    ? 'border-2 border-[#DD8560] scale-105 shadow-sm' 
+                    : 'border border-neutral-200 dark:border-slate-700 group-hover:border-[#DD8560]'
                 }`}>
-                  <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-slate-900 p-0.5">
+                  <div className="w-full h-full rounded-full overflow-hidden bg-[#F9F9F9] dark:bg-slate-900 p-0.5">
                     <img 
                       src={imageToShow} 
                       alt={cat} 
@@ -185,8 +185,8 @@ export function StorefrontHome() {
                   </div>
                 </div>
 
-                <span className={`text-[10px] md:text-xs font-semibold max-w-[65px] sm:max-w-[70px] truncate text-center transition-colors ${
-                  isSelected ? 'text-emerald-600 dark:text-emerald-400 font-extrabold' : 'text-neutral-700 dark:text-slate-300 group-hover:text-emerald-600'
+                <span className={`text-[10px] font-tenor uppercase tracking-widest max-w-[70px] truncate text-center transition-colors ${
+                  isSelected ? 'text-[#DD8560] font-bold' : 'text-neutral-700 dark:text-slate-300 group-hover:text-[#DD8560]'
                 }`}>
                   {cat}
                 </span>
@@ -196,12 +196,12 @@ export function StorefrontHome() {
         </div>
       </section>
 
-      {/* 2. Hero Carousel Slider */}
+      {/* 2. Open Fashion Editorial Hero Slider */}
       <section className="w-full max-w-7xl mx-auto px-0 sm:px-3 md:px-6 mt-0 sm:mt-3 md:mt-6">
         {loadingBanners ? (
           <SkeletonBanner />
         ) : activeBanners.length > 0 ? (
-          <div className="relative w-full h-[180px] sm:h-[280px] md:h-[380px] lg:h-[440px] rounded-none sm:rounded-2xl md:rounded-3xl overflow-hidden shadow-lg group">
+          <div className="relative w-full h-[220px] sm:h-[320px] md:h-[420px] lg:h-[480px] rounded-none sm:rounded-2xl md:rounded-3xl overflow-hidden shadow-md group">
             {activeBanners.map((banner, index) => (
               <div 
                 key={banner.id}
@@ -212,22 +212,22 @@ export function StorefrontHome() {
                   alt={banner.title}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/80 via-black/40 to-transparent flex items-end md:items-center">
-                  <div className="text-white p-4 sm:p-6 md:p-12 max-w-lg">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 backdrop-blur-md border border-emerald-400/40 text-[10px] md:text-xs font-bold text-emerald-300 mb-2">
-                      <Sparkles className="w-3 h-3" /> Featured Collection
+                <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/85 via-black/40 to-transparent flex items-end md:items-center">
+                  <div className="text-white p-5 sm:p-8 md:p-14 max-w-lg text-left">
+                    <span className="inline-block font-tenor uppercase tracking-luxury text-[10px] md:text-xs text-[#DD8560] font-bold mb-2">
+                      Luxury Collection
                     </span>
-                    <h2 className="text-base sm:text-2xl md:text-4xl font-extrabold tracking-tight leading-tight mb-2">
+                    <h2 className="font-tenor text-lg sm:text-3xl md:text-5xl uppercase tracking-wider leading-tight mb-3 font-normal">
                       {banner.title}
                     </h2>
-                    <p className="text-xs md:text-sm text-neutral-200 opacity-90 mb-4 hidden sm:block">
-                      Explore curations and exclusive WhatsApp store deals.
+                    <p className="text-xs md:text-sm text-neutral-300 font-sans opacity-90 mb-5 hidden sm:block">
+                      Discover refined craftsmanship and modern elegance.
                     </p>
                     <button 
                       onClick={() => navigate(banner.link || "/categories")}
-                      className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-1.5 md:px-6 md:py-2.5 rounded-full font-bold text-xs md:text-sm shadow-lg shadow-emerald-600/30 flex items-center gap-1.5 active:scale-95 transition-all"
+                      className="bg-[#111111] hover:bg-[#DD8560] text-white px-5 py-2.5 md:px-7 md:py-3 font-tenor uppercase tracking-luxury text-xs transition-colors shadow-lg border border-white/20 active:scale-95 flex items-center gap-2"
                     >
-                      <span>Shop Collection</span>
+                      <span>Explore Collection</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -257,7 +257,7 @@ export function StorefrontHome() {
                     <button 
                       key={idx}
                       onClick={() => setCurrentBannerIndex(idx)}
-                      className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentBannerIndex ? 'bg-emerald-500 w-6' : 'bg-white/50 w-1.5'}`}
+                      className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentBannerIndex ? 'bg-[#DD8560] w-6' : 'bg-white/50 w-1.5'}`}
                     />
                   ))}
                 </div>
@@ -330,22 +330,19 @@ export function StorefrontHome() {
         </section>
       )}
 
-      {/* 5. Sticky Category Filter Pill Bar */}
-      <section className="sticky top-14 md:top-20 z-30 bg-neutral-50/95 dark:bg-slate-950/95 backdrop-blur-md py-2 border-y border-neutral-200/50 dark:border-slate-800 mt-4 sm:mt-6 shadow-xs">
-        <div className="max-w-7xl mx-auto px-2 md:px-6 flex items-center gap-1.5 md:gap-2 overflow-x-auto no-scrollbar">
-          <span className="text-[11px] md:text-xs font-bold text-neutral-400 dark:text-slate-500 flex items-center gap-1 mr-0.5 flex-shrink-0">
-            <Layers className="w-3.5 h-3.5" /> Filter:
-          </span>
+      {/* 5. Sticky Category Filter Tab Bar */}
+      <section className="sticky top-14 md:top-20 z-30 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md py-3 border-y border-neutral-200/50 dark:border-slate-800 mt-6 shadow-xs">
+        <div className="max-w-7xl mx-auto px-2 md:px-6 flex items-center justify-center gap-6 overflow-x-auto no-scrollbar">
           {allCategories.map((cat) => {
             const isSelected = selectedCategory === cat;
             return (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-3 py-1 md:px-3.5 md:py-1.5 rounded-full text-xs font-bold transition-all duration-200 flex-shrink-0 active:scale-95 ${
+                className={`pb-1 text-xs font-tenor uppercase tracking-luxury whitespace-nowrap transition-all flex-shrink-0 active:scale-95 ${
                   isSelected
-                    ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-                    : 'bg-white dark:bg-slate-900 text-neutral-700 dark:text-slate-300 border border-neutral-200/80 dark:border-slate-800 hover:border-emerald-500'
+                    ? 'text-[#DD8560] border-b-2 border-[#DD8560] font-bold'
+                    : 'text-neutral-500 dark:text-slate-400 hover:text-neutral-900 dark:hover:text-white'
                 }`}
               >
                 {cat}
@@ -355,27 +352,32 @@ export function StorefrontHome() {
         </div>
       </section>
 
+      {/* Signature Diamond Decorative Divider */}
+      <div className="flex items-center justify-center gap-3 my-8 text-neutral-300 dark:text-slate-700">
+        <div className="w-12 h-px bg-neutral-200 dark:bg-slate-800" />
+        <span className="text-[#DD8560] text-xs font-serif">◇</span>
+        <div className="w-12 h-px bg-neutral-200 dark:bg-slate-800" />
+      </div>
+
       {/* 6. Main Product Feed Grid */}
-      <section className="max-w-7xl mx-auto px-2 md:px-6 mt-4 sm:mt-6">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm md:text-xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
-            {selectedCategory === 'All' ? 'Curated Catalog' : `${selectedCategory} Products`}
+      <section className="max-w-7xl mx-auto px-2 md:px-6">
+        <div className="text-center mb-6">
+          <h2 className="font-tenor text-lg sm:text-2xl uppercase tracking-luxury text-neutral-900 dark:text-white mb-1">
+            {selectedCategory === 'All' ? 'New Arrival' : `${selectedCategory}`}
           </h2>
-          <span className="text-[11px] md:text-xs font-semibold text-neutral-400">
-            {filteredProducts.length} items
-          </span>
+          <div className="w-8 h-0.5 bg-[#DD8560] mx-auto mt-1" />
         </div>
 
         {filteredProducts.length === 0 ? (
-          <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-3xl border border-neutral-200/60 dark:border-slate-800 p-8">
+          <div className="text-center py-16 bg-white dark:bg-slate-900 border border-neutral-200/60 dark:border-slate-800 p-8">
             <div className="w-12 h-12 bg-neutral-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3 text-neutral-400">
               <Layers className="w-6 h-6" />
             </div>
-            <h3 className="text-sm font-bold text-neutral-800 dark:text-slate-200 mb-1">No products found</h3>
+            <h3 className="text-sm font-tenor uppercase tracking-wider text-neutral-800 dark:text-slate-200 mb-1">No products found</h3>
             <p className="text-xs text-neutral-500">Try selecting another category filter above.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 md:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
             {filteredProducts.map((product) => (
               <ProductGridItem 
                 key={product.id || product.title} 

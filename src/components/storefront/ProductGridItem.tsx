@@ -28,34 +28,34 @@ export function ProductGridItem({ product, triggerToast, onQuickBuy }: ProductGr
 
   return (
     <div 
-      className="group bg-white dark:bg-slate-900 border border-neutral-200/80 dark:border-slate-800 rounded-2xl md:rounded-3xl overflow-hidden flex flex-col h-full shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer relative active:scale-[0.98]"
+      className="group bg-white dark:bg-slate-900 border-none overflow-hidden flex flex-col h-full hover:shadow-lg transition-all duration-300 cursor-pointer relative active:scale-[0.99] text-left"
       onClick={() => navigate(`/product/${slugify(product.title)}`)}
     >
       {/* Product Image Container */}
-      <div className="relative aspect-square bg-neutral-50 dark:bg-slate-800/40 flex items-center justify-center overflow-hidden p-2.5 md:p-4">
+      <div className="relative aspect-[3/4] bg-[#F9F9F9] dark:bg-slate-800/40 flex items-center justify-center overflow-hidden p-2">
         <ResponsiveImage 
           src={product.image} 
           alt={product.title} 
-          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" 
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
         />
         
         {/* Discount Badge */}
         {discountPercent ? (
-          <div className="absolute top-2 left-2 bg-gradient-to-r from-rose-600 to-red-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow-xs tracking-wider">
+          <div className="absolute top-2 left-2 bg-[#DD8560] text-white text-[9px] font-tenor uppercase tracking-widest px-2 py-0.5 shadow-xs">
             -{discountPercent}%
           </div>
         ) : product.sale ? (
-          <div className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow-xs uppercase">
+          <div className="absolute top-2 left-2 bg-[#111111] text-white text-[9px] font-tenor uppercase tracking-widest px-2 py-0.5">
             SALE
           </div>
         ) : null}
 
         {/* Wishlist Heart Button */}
         <button
-          className={`absolute top-2 right-2 p-1.5 md:p-2 rounded-full backdrop-blur-md transition-all active:scale-90 shadow-sm ${
+          className={`absolute top-2 right-2 p-1.5 rounded-full transition-all active:scale-90 ${
             isWishlisted 
-              ? 'bg-rose-50 text-rose-600 dark:bg-rose-950/80 dark:text-rose-400' 
-              : 'bg-white/80 text-neutral-400 hover:text-rose-500 dark:bg-slate-900/80 dark:text-slate-400'
+              ? 'text-[#DD8560]' 
+              : 'text-neutral-400 hover:text-[#DD8560]'
           }`}
           onClick={(e) => {
             e.stopPropagation();
@@ -66,40 +66,40 @@ export function ProductGridItem({ product, triggerToast, onQuickBuy }: ProductGr
           }}
           title="Wishlist"
         >
-          <Heart className={`w-3.5 h-3.5 md:w-4 md:h-4 ${isWishlisted ? 'fill-rose-500 text-rose-500' : ''}`} />
+          <Heart className={`w-4 h-4 stroke-[1.5] ${isWishlisted ? 'fill-[#DD8560] text-[#DD8560]' : ''}`} />
         </button>
       </div>
 
       {/* Product Content & Details */}
-      <div className="p-3 md:p-4 flex flex-col flex-grow text-left">
+      <div className="pt-2.5 pb-2 px-1 flex flex-col flex-grow text-center items-center">
         
-        {/* Rating Badge Chip */}
-        <div className="flex items-center gap-1 mb-1">
-          <div className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400 text-[10px] md:text-xs font-bold">
-            <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+        {/* Rating Star Chip */}
+        <div className="flex items-center gap-1 mb-1 justify-center">
+          <div className="inline-flex items-center gap-1 text-[#DD8560] text-[10px] font-medium">
+            <Star className="w-3 h-3 fill-[#DD8560] text-[#DD8560]" />
             <span>{displayRating.toFixed(1)}</span>
           </div>
-          <span className="text-[10px] md:text-xs text-neutral-400 font-medium">({displayCount})</span>
+          <span className="text-[10px] text-neutral-400">({displayCount})</span>
         </div>
 
         {/* Product Title */}
-        <h3 className="text-xs md:text-sm font-bold text-neutral-900 dark:text-white line-clamp-2 mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors leading-snug">
+        <h3 className="font-tenor text-xs sm:text-sm text-neutral-900 dark:text-white uppercase tracking-wider line-clamp-1 mb-1 group-hover:text-[#DD8560] transition-colors">
           {product.title}
         </h3>
 
         {/* Pricing Area */}
-        <div className="mt-auto pt-1 mb-2.5 flex items-baseline gap-1.5 flex-wrap">
-          <span className="text-sm md:text-base font-extrabold text-neutral-900 dark:text-white tracking-tight">
+        <div className="mt-auto pt-0.5 mb-2 flex items-baseline gap-2 justify-center">
+          <span className="font-tenor text-sm sm:text-base text-[#DD8560] font-normal tracking-wide">
             {formatPrice(product.price)}
           </span>
           {product.originalPrice && product.originalPrice > product.price && (
-            <span className="text-neutral-400 line-through text-[10px] md:text-xs font-medium">
+            <span className="text-neutral-400 line-through text-xs font-tenor">
               {formatPrice(product.originalPrice)}
             </span>
           )}
         </div>
 
-        {/* Full-width Add to Cart / Quick Buy Button */}
+        {/* Minimalist Open Fashion Button */}
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -115,13 +115,13 @@ export function ProductGridItem({ product, triggerToast, onQuickBuy }: ProductGr
                 size: product.sizes?.[0], 
                 color: product.colors?.[0] 
               });
-              triggerToast(`Added "${product.title}" to cart!`);
+              triggerToast(`Added "${product.title}" to bag!`);
             }
           }}
-          className="w-full bg-emerald-700 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-[11px] md:text-xs font-extrabold py-2 px-3 rounded-xl active:scale-95 transition-all shadow-xs flex items-center justify-center gap-1.5 mt-1"
+          className="w-full bg-[#111111] hover:bg-[#DD8560] dark:bg-slate-800 dark:hover:bg-[#DD8560] text-white text-[10px] md:text-xs font-tenor uppercase tracking-luxury py-2 px-2 transition-colors flex items-center justify-center gap-1.5"
         >
-          <ShoppingBag className="w-3.5 h-3.5" />
-          <span>Add to Cart</span>
+          <Plus className="w-3 h-3" />
+          <span>Add To Bag</span>
         </button>
 
       </div>

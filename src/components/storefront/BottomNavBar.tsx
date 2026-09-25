@@ -49,27 +49,27 @@ export function BottomNavBar() {
             <Link
               key={item.label}
               to={item.to}
-              className={`relative flex flex-col items-center justify-center py-1.5 px-3 rounded-2xl transition-all duration-200 active:scale-90 ${
+              className={`relative flex flex-col items-center justify-center py-1 px-3 rounded-2xl transition-all duration-200 active:scale-90 ${
                 item.isActive
-                  ? 'text-emerald-600 dark:text-emerald-400 font-bold'
+                  ? 'text-[#DD8560] font-bold'
                   : 'text-neutral-500 dark:text-slate-400 hover:text-neutral-900 dark:hover:text-white'
               }`}
             >
               {/* Active Glow Pill Backdrop */}
               {item.isActive && (
-                <span className="absolute inset-0 bg-emerald-500/10 dark:bg-emerald-500/20 rounded-2xl animate-fade-in" />
+                <span className="absolute inset-0 bg-[#DD8560]/10 rounded-2xl animate-fade-in" />
               )}
               
               <div className="relative">
-                <Icon className={`w-5 h-5 transition-transform ${item.isActive ? 'scale-110' : ''}`} />
+                <Icon className={`w-5 h-5 stroke-[1.5] transition-transform ${item.isActive ? 'scale-110' : ''}`} />
                 {item.badge !== undefined && item.badge > 0 && (
-                  <span className="absolute -top-1.5 -right-2.5 bg-emerald-600 text-white text-[10px] font-extrabold px-1.5 py-0.2 min-w-[18px] h-[18px] rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900 shadow-sm animate-pulse">
+                  <span className="absolute -top-1.5 -right-2.5 bg-[#DD8560] text-white text-[9px] font-bold px-1.5 py-0.2 min-w-[17px] h-[17px] rounded-full flex items-center justify-center border border-white dark:border-slate-900 shadow-xs">
                     {item.badge}
                   </span>
                 )}
               </div>
               
-              <span className={`text-[10px] tracking-tight mt-1 font-medium ${item.isActive ? 'font-bold' : ''}`}>
+              <span className={`text-[9px] tracking-wider uppercase mt-1 font-tenor ${item.isActive ? 'font-bold' : ''}`}>
                 {item.label}
               </span>
             </Link>
@@ -81,14 +81,14 @@ export function BottomNavBar() {
           href={`https://wa.me/${storePhone}`}
           target="_blank"
           rel="noreferrer"
-          className="relative flex flex-col items-center justify-center py-1.5 px-3 rounded-2xl text-emerald-600 dark:text-emerald-400 active:scale-90 transition-all"
+          className="relative flex flex-col items-center justify-center py-1 px-3 rounded-2xl text-emerald-600 dark:text-emerald-400 active:scale-90 transition-all"
           title="Direct WhatsApp Support"
         >
           <div className="relative">
-            <MessageSquare className="w-5 h-5 fill-emerald-500/20 text-emerald-600 dark:text-emerald-400" />
+            <MessageSquare className="w-5 h-5 stroke-[1.5] fill-emerald-500/10 text-emerald-600 dark:text-emerald-400" />
             <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
           </div>
-          <span className="text-[10px] font-semibold tracking-tight mt-1">
+          <span className="text-[9px] font-tenor tracking-wider uppercase mt-1">
             WhatsApp
           </span>
         </a>
@@ -96,17 +96,17 @@ export function BottomNavBar() {
         {/* Menu Drawer Toggle */}
         <button
           onClick={() => setIsMobileDrawerOpen(!isMobileDrawerOpen)}
-          className={`relative flex flex-col items-center justify-center py-1.5 px-3 rounded-2xl active:scale-90 transition-all ${
+          className={`relative flex flex-col items-center justify-center py-1 px-3 rounded-2xl active:scale-90 transition-all ${
             isMobileDrawerOpen
-              ? 'text-emerald-600 dark:text-emerald-400 font-bold'
+              ? 'text-[#DD8560] font-bold'
               : 'text-neutral-500 dark:text-slate-400'
           }`}
         >
           {isMobileDrawerOpen && (
-            <span className="absolute inset-0 bg-emerald-500/10 dark:bg-emerald-500/20 rounded-2xl" />
+            <span className="absolute inset-0 bg-[#DD8560]/10 rounded-2xl" />
           )}
-          <Menu className="w-5 h-5" />
-          <span className="text-[10px] tracking-tight mt-1 font-medium">
+          <Menu className="w-5 h-5 stroke-[1.5]" />
+          <span className="text-[9px] font-tenor tracking-wider uppercase mt-1">
             Menu
           </span>
         </button>

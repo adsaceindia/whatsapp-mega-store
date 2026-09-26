@@ -577,6 +577,74 @@ async function startServer() {
     }
   });
 
+  // Dynamic Robots.txt for Search & AI Crawlers
+  app.get('/robots.txt', (req, res) => {
+    const host = req.get('host') || 'localhost:3001';
+    const protocol = req.secure || req.headers['x-forwarded-proto'] === 'https' ? 'https' : 'http';
+    const baseUrl = `${protocol}://${host}`;
+
+    const content = `User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /storeadmin/
+
+# AI Crawlers & Answer Engines Optimization (AEO)
+User-agent: GPTBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: GoogleOther
+Allow: /
+
+Sitemap: ${baseUrl}/sitemap.xml
+`;
+    res.header('Content-Type', 'text/plain');
+    res.status(200).send(content);
+  });
+
+  // Dynamic llms.txt for AI Search Engine Summaries (Perplexity, SearchGPT, Claude)
+  app.get('/llms.txt', async (req, res) => {
+    try {
+      const host = req.get('host') || 'localhost:3001';
+      const protocol = req.secure || req.headers['x-forwarded-proto'] === 'https' ? 'https' : 'http';
+      const baseUrl = `${protocol}://${host}`;
+
+      const brandingSetting = await db.get('SELECT value FROM settings WHERE key = ?', ['branding']);
+      const branding = brandingSetting ? JSON.parse(brandingSetting.value) : {};
+      const storeName = branding.storeName || 'Boutique Fashion & Accessories Store';
+
+      const products = await db.all('SELECT title, price, category, description FROM products WHERE active = 1');
+
+      let markdown = `# ${storeName}\n\n`;
+      markdown += `> Premium curated fashion, apparel, and lifestyle accessories designed with timeless elegance.\n\n`;
+      markdown += `## About Us\n`;
+      markdown += `We deliver high-quality, handcrafted, and curated boutique products directly to your doorstep. Browse our collection online and checkout instantly via WhatsApp or online payment gateways.\n\n`;
+      markdown += `## Key Product Catalog\n\n`;
+
+      products.forEach((p: any) => {
+        markdown += `- **${p.title}** ($${p.price}) [Category: ${p.category || 'General'}]\n`;
+        if (p.description) {
+          markdown += `  - ${p.description.substring(0, 120)}...\n`;
+        }
+      });
+
+      markdown += `\n## Useful Links\n`;
+      markdown += `- Storefront Home: ${baseUrl}/\n`;
+      markdown += `- All Collections: ${baseUrl}/categories\n`;
+      markdown += `- XML Sitemap: ${baseUrl}/sitemap.xml\n`;
+
+      res.header('Content-Type', 'text/markdown');
+      res.status(200).send(markdown);
+    } catch (err: any) {
+      res.status(500).send('Error generating llms.txt');
+    }
+  });
+
   // Dynamic XML Sitemap Generator
   app.get('/sitemap.xml', async (req, res) => {
     try {

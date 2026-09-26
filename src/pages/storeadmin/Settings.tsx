@@ -529,16 +529,164 @@ export function Settings() {
                     </div>
                   </div>
 
-                  <div className="pt-4 border-t border-gray-100 flex justify-end">
-                    <button 
-                      type="submit" 
-                      disabled={saving}
-                      className="btn btn-primary btn-md"
-                    >
-                      <Save size={16} />
-                      {saving ? 'Saving...' : 'Save General Settings'}
-                    </button>
-                  </div>
+                    {/* Local Store Address & Map Section Controls */}
+                    <div className="pt-6 border-t border-gray-200 space-y-4">
+                      <div className="flex items-center justify-between bg-stone-50 p-4 rounded-xl border border-stone-200">
+                        <div>
+                          <h3 className="text-sm font-bold text-gray-900">Show Local Store Address & Map View</h3>
+                          <p className="text-xs text-gray-500">Toggle whether to render the store location map & contact panel on storefront home below FAQ.</p>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            checked={generalSettings.showStoreAddressMap !== false} 
+                            onChange={e => setGeneralSettings(prev => ({ ...prev, showStoreAddressMap: e.target.checked }))}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                        </label>
+                      </div>
+
+                      {generalSettings.showStoreAddressMap !== false && (
+                        <div className="space-y-4 p-4 border border-stone-200 rounded-xl bg-white shadow-xs">
+                          <h4 className="text-xs font-bold text-gray-800 uppercase tracking-wider">Store Location & Contact Details</h4>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="md:col-span-2">
+                              <label className="block text-xs font-semibold text-gray-700 mb-1">Street Address</label>
+                              <input 
+                                type="text"
+                                value={generalSettings.storeAddress || ''}
+                                onChange={e => setGeneralSettings(prev => ({ ...prev, storeAddress: e.target.value }))}
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="123 Fashion Boulevard, Suite 400"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-xs font-semibold text-gray-700 mb-1">City</label>
+                              <input 
+                                type="text"
+                                value={generalSettings.storeCity || ''}
+                                onChange={e => setGeneralSettings(prev => ({ ...prev, storeCity: e.target.value }))}
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="New York"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-xs font-semibold text-gray-700 mb-1">State / Region</label>
+                              <input 
+                                type="text"
+                                value={generalSettings.storeState || ''}
+                                onChange={e => setGeneralSettings(prev => ({ ...prev, storeState: e.target.value }))}
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="NY"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-xs font-semibold text-gray-700 mb-1">Pincode / Zip Code</label>
+                              <input 
+                                type="text"
+                                value={generalSettings.storePincode || ''}
+                                onChange={e => setGeneralSettings(prev => ({ ...prev, storePincode: e.target.value }))}
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="10001"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-xs font-semibold text-gray-700 mb-1">Country</label>
+                              <input 
+                                type="text"
+                                value={generalSettings.storeCountry || ''}
+                                onChange={e => setGeneralSettings(prev => ({ ...prev, storeCountry: e.target.value }))}
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="United States"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-xs font-semibold text-gray-700 mb-1">Store Phone / Mobile</label>
+                              <input 
+                                type="text"
+                                value={generalSettings.storePhone || ''}
+                                onChange={e => setGeneralSettings(prev => ({ ...prev, storePhone: e.target.value }))}
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="+1 (555) 234-5678"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-xs font-semibold text-gray-700 mb-1">Store Email</label>
+                              <input 
+                                type="email"
+                                value={generalSettings.storeEmail || ''}
+                                onChange={e => setGeneralSettings(prev => ({ ...prev, storeEmail: e.target.value }))}
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="support@mystore.com"
+                              />
+                            </div>
+                          </div>
+
+                          <h4 className="text-xs font-bold text-gray-800 uppercase tracking-wider pt-2">Social Media Links</h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-xs font-semibold text-gray-700 mb-1">Instagram URL</label>
+                              <input 
+                                type="text"
+                                value={generalSettings.instagramUrl || ''}
+                                onChange={e => setGeneralSettings(prev => ({ ...prev, instagramUrl: e.target.value }))}
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="https://instagram.com/yourhandle"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-semibold text-gray-700 mb-1">Facebook URL</label>
+                              <input 
+                                type="text"
+                                value={generalSettings.facebookUrl || ''}
+                                onChange={e => setGeneralSettings(prev => ({ ...prev, facebookUrl: e.target.value }))}
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="https://facebook.com/yourpage"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-semibold text-gray-700 mb-1">Twitter / X URL</label>
+                              <input 
+                                type="text"
+                                value={generalSettings.twitterUrl || ''}
+                                onChange={e => setGeneralSettings(prev => ({ ...prev, twitterUrl: e.target.value }))}
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="https://twitter.com/yourhandle"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-semibold text-gray-700 mb-1">YouTube Channel URL</label>
+                              <input 
+                                type="text"
+                                value={generalSettings.youtubeUrl || ''}
+                                onChange={e => setGeneralSettings(prev => ({ ...prev, youtubeUrl: e.target.value }))}
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="https://youtube.com/@yourchannel"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="pt-4 border-t border-gray-100 flex justify-end">
+                      <button 
+                        type="submit" 
+                        disabled={saving}
+                        className="btn btn-primary btn-md"
+                      >
+                        <Save size={16} />
+                        {saving ? 'Saving...' : 'Save General Settings'}
+                      </button>
+                    </div>
                 </form>
               )}
 

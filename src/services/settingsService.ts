@@ -67,6 +67,18 @@ export interface GeneralSettings {
   whatsappNumber: string;
   currency: string;
   customCurrencies?: {value: string, label: string}[];
+  showStoreAddressMap?: boolean;
+  storeAddress?: string;
+  storeCity?: string;
+  storeState?: string;
+  storePincode?: string;
+  storeCountry?: string;
+  storePhone?: string;
+  storeEmail?: string;
+  instagramUrl?: string;
+  facebookUrl?: string;
+  twitterUrl?: string;
+  youtubeUrl?: string;
 }
 
 export const getGeneralSettings = async (storeId?: string): Promise<GeneralSettings> => {
@@ -74,14 +86,44 @@ export const getGeneralSettings = async (storeId?: string): Promise<GeneralSetti
     const res = await fetch('/api/settings/general');
     if (res.ok) {
       const data = await res.json();
-      if (data) return data;
+      if (data) {
+        return {
+          whatsappNumber: data.whatsappNumber || '+1234567890',
+          currency: data.currency || 'USD',
+          customCurrencies: data.customCurrencies || [],
+          showStoreAddressMap: data.showStoreAddressMap !== undefined ? data.showStoreAddressMap : true,
+          storeAddress: data.storeAddress || '123 Fashion Boulevard, Suite 400',
+          storeCity: data.storeCity || 'New York',
+          storeState: data.storeState || 'NY',
+          storePincode: data.storePincode || '10001',
+          storeCountry: data.storeCountry || 'United States',
+          storePhone: data.storePhone || '+1 (555) 234-5678',
+          storeEmail: data.storeEmail || 'support@mystore.com',
+          instagramUrl: data.instagramUrl || 'https://instagram.com',
+          facebookUrl: data.facebookUrl || 'https://facebook.com',
+          twitterUrl: data.twitterUrl || 'https://twitter.com',
+          youtubeUrl: data.youtubeUrl || 'https://youtube.com'
+        };
+      }
     }
   } catch (e) {
     console.error('Failed to get general settings:', e);
   }
   return {
     whatsappNumber: '+1234567890',
-    currency: 'USD'
+    currency: 'USD',
+    showStoreAddressMap: true,
+    storeAddress: '123 Fashion Boulevard, Suite 400',
+    storeCity: 'New York',
+    storeState: 'NY',
+    storePincode: '10001',
+    storeCountry: 'United States',
+    storePhone: '+1 (555) 234-5678',
+    storeEmail: 'support@mystore.com',
+    instagramUrl: 'https://instagram.com',
+    facebookUrl: 'https://facebook.com',
+    twitterUrl: 'https://twitter.com',
+    youtubeUrl: 'https://youtube.com'
   };
 };
 

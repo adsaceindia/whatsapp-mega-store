@@ -147,6 +147,56 @@ export function StorefrontProduct() {
       <Helmet>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Product",
+                "name": product.title,
+                "image": galleryImages,
+                "description": pageDescription,
+                "sku": product.id,
+                "category": product.category,
+                "offers": {
+                  "@type": "Offer",
+                  "priceCurrency": settings?.currency || "USD",
+                  "price": currentPrice,
+                  "availability": (product.inventoryQuantity ?? 1) > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+                  "url": window.location.href
+                },
+                "aggregateRating": {
+                  "@type": "AggregateRating",
+                  "ratingValue": displayRating,
+                  "reviewCount": displayCount
+                }
+              },
+              {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": `${window.location.origin}/`
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": product.category || "Shop",
+                    "item": `${window.location.origin}/categories`
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": product.title,
+                    "item": window.location.href
+                  }
+                ]
+              }
+            ]
+          })}
+        </script>
       </Helmet>
 
       {/* Toast Alert Popup */}

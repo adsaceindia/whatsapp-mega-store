@@ -1062,6 +1062,79 @@ async function startServer() {
       res.status(500).json({ error: err.message });
     }
   });
+  app.get("/robots.txt", (req, res) => {
+    const host = req.get("host") || "localhost:3001";
+    const protocol = req.secure || req.headers["x-forwarded-proto"] === "https" ? "https" : "http";
+    const baseUrl = `${protocol}://${host}`;
+    const content = `User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /storeadmin/
+
+# AI Crawlers & Answer Engines Optimization (AEO)
+User-agent: GPTBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: GoogleOther
+Allow: /
+
+Sitemap: ${baseUrl}/sitemap.xml
+`;
+    res.header("Content-Type", "text/plain");
+    res.status(200).send(content);
+  });
+  app.get("/llms.txt", async (req, res) => {
+    try {
+      const host = req.get("host") || "localhost:3001";
+      const protocol = req.secure || req.headers["x-forwarded-proto"] === "https" ? "https" : "http";
+      const baseUrl = `${protocol}://${host}`;
+      const brandingSetting = await db.get("SELECT value FROM settings WHERE key = ?", ["branding"]);
+      const branding = brandingSetting ? JSON.parse(brandingSetting.value) : {};
+      const storeName = branding.storeName || "Boutique Fashion & Accessories Store";
+      const products = await db.all("SELECT title, price, category, description FROM products WHERE active = 1");
+      let markdown = `# ${storeName}
+
+`;
+      markdown += `> Premium curated fashion, apparel, and lifestyle accessories designed with timeless elegance.
+
+`;
+      markdown += `## About Us
+`;
+      markdown += `We deliver high-quality, handcrafted, and curated boutique products directly to your doorstep. Browse our collection online and checkout instantly via WhatsApp or online payment gateways.
+
+`;
+      markdown += `## Key Product Catalog
+
+`;
+      products.forEach((p) => {
+        markdown += `- **${p.title}** ($${p.price}) [Category: ${p.category || "General"}]
+`;
+        if (p.description) {
+          markdown += `  - ${p.description.substring(0, 120)}...
+`;
+        }
+      });
+      markdown += `
+## Useful Links
+`;
+      markdown += `- Storefront Home: ${baseUrl}/
+`;
+      markdown += `- All Collections: ${baseUrl}/categories
+`;
+      markdown += `- XML Sitemap: ${baseUrl}/sitemap.xml
+`;
+      res.header("Content-Type", "text/markdown");
+      res.status(200).send(markdown);
+    } catch (err) {
+      res.status(500).send("Error generating llms.txt");
+    }
+  });
   app.get("/sitemap.xml", async (req, res) => {
     try {
       const host = req.get("host") || "localhost:3000";

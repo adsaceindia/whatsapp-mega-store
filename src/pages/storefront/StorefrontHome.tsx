@@ -16,6 +16,7 @@ import { InterestingLoader } from '../../components/storefront/InterestingLoader
 import { ProductGridItem } from '../../components/storefront/ProductGridItem';
 import { FAQSection } from '../../components/storefront/FAQSection';
 import { TestimonialsSection } from '../../components/storefront/TestimonialsSection';
+import { LocalStoreSection } from '../../components/storefront/LocalStoreSection';
 import { Sparkles, Flame, CheckCircle, Tag, ArrowRight, ChevronLeft, ChevronRight, Layers } from 'lucide-react';
 
 export function StorefrontHome() {
@@ -529,6 +530,53 @@ export function StorefrontHome() {
       <section className="w-full max-w-none px-3 md:px-8 lg:px-12 mt-6 sm:mt-8">
         <FAQSection />
       </section>
+
+      {/* 9. Local Store Address & Map Section */}
+      <LocalStoreSection />
+
+      {/* JSON-LD Structured Data Schema for SEO & AEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "WebSite",
+                "@id": `${window.location.origin}/#website`,
+                "url": `${window.location.origin}/`,
+                "name": storeSettings?.storeName || 'Boutique Store',
+                "description": storeSettings?.storeDescription || 'Premium Fashion & Lifestyle E-Commerce Store'
+              },
+              {
+                "@type": "Organization",
+                "@id": `${window.location.origin}/#organization`,
+                "name": storeSettings?.storeName || 'Boutique Store',
+                "logo": storeSettings?.storeIcon || undefined,
+                "email": settings?.storeEmail || 'support@mystore.com',
+                "telephone": settings?.storePhone || settings?.whatsappNumber || '+15552345678'
+              },
+              {
+                "@type": "LocalBusiness",
+                "@id": `${window.location.origin}/#localbusiness`,
+                "name": storeSettings?.storeName || 'Boutique Store',
+                "image": storeSettings?.storeIcon || undefined,
+                "telephone": settings?.storePhone || settings?.whatsappNumber || '+15552345678',
+                "email": settings?.storeEmail || 'support@mystore.com',
+                "address": {
+                  "@type": "PostalAddress",
+                  "streetAddress": settings?.storeAddress || '123 Fashion Boulevard, Suite 400',
+                  "addressLocality": settings?.storeCity || 'New York',
+                  "addressRegion": settings?.storeState || 'NY',
+                  "postalCode": settings?.storePincode || '10001',
+                  "addressCountry": settings?.storeCountry || 'US'
+                },
+                "priceRange": "$$"
+              }
+            ]
+          })
+        }}
+      />
 
     </div>
   );

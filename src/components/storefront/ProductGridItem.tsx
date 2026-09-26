@@ -87,6 +87,25 @@ export function ProductGridItem({ product, triggerToast, onQuickBuy }: ProductGr
           {product.title}
         </h3>
 
+        {/* Color Swatch Preview Dots */}
+        {product.colors && product.colors.length > 0 && (
+          <div className="flex items-center justify-center gap-1 mb-1.5">
+            {product.colors.slice(0, 3).map((col: string, idx: number) => (
+              <span
+                key={idx}
+                className="w-2.5 h-2.5 rounded-full border border-neutral-300 dark:border-slate-700 shadow-2xs"
+                style={{ backgroundColor: col.startsWith('#') ? col : '#DDD' }}
+                title={col}
+              />
+            ))}
+            {product.colors.length > 3 && (
+              <span className="text-[9px] font-mono text-neutral-400 font-medium">
+                +{product.colors.length - 3}
+              </span>
+            )}
+          </div>
+        )}
+
         {/* Pricing Area */}
         <div className="mt-auto pt-0.5 mb-2 flex items-baseline gap-2 justify-center">
           <span className="font-tenor text-sm sm:text-base text-[#DD8560] font-normal tracking-wide">

@@ -433,9 +433,12 @@ html, body, #root {
     @apply object-contain w-full h-full;
   }
 
-  /* Open Fashion UI Kit Utilities */
+  /* Open Fashion, ÉLANORA & VELORA UI Kit Utilities */
   .font-tenor {
     font-family: var(--font-tenor), "Playfair Display", serif;
+  }
+  .font-serif-title {
+    font-family: var(--font-serif), "Playfair Display", Georgia, serif;
   }
   .tracking-luxury {
     letter-spacing: 0.22em;
@@ -448,5 +451,11 @@ html, body, #root {
   }
   .border-fashion-accent {
     border-color: #DD8560;
+  }
+  .bg-warm-neutral {
+    background-color: #F7F4F0;
+  }
+  .border-warm-neutral {
+    border-color: #E8E2D9;
   }
 }

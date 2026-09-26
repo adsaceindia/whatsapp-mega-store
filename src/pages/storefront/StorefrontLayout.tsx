@@ -69,7 +69,7 @@ export function StorefrontLayout() {
       <MobileDrawer />
 
       {/* Main Content Area */}
-      <main className="flex-1 pt-14 md:pt-20 w-full max-w-7xl mx-auto px-0 md:px-6 lg:px-8">
+      <main className="flex-1 pt-14 md:pt-20 w-full max-w-none px-0 md:px-6 lg:px-8">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={location.pathname}

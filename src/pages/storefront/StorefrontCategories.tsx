@@ -126,7 +126,7 @@ export function StorefrontCategories() {
         />
       )}
 
-      <div className="max-w-7xl mx-auto px-2 md:px-6 flex flex-col md:flex-row gap-6">
+      <div className="w-full max-w-none px-3 md:px-8 lg:px-12 flex flex-col md:flex-row gap-6">
         
         {/* Desktop Sidebar Filter Card */}
         <div className="hidden md:block w-64 flex-shrink-0">

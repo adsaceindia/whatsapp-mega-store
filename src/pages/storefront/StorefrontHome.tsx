@@ -197,7 +197,7 @@ export function StorefrontHome() {
       </section>
 
       {/* 2. Open Fashion Editorial Hero Slider */}
-      <section className="w-full max-w-7xl mx-auto px-0 sm:px-3 md:px-6 mt-0 sm:mt-3 md:mt-6">
+      <section className="w-full max-w-none px-0 sm:px-4 md:px-8 lg:px-12 mt-0 sm:mt-3 md:mt-6">
         {loadingBanners ? (
           <SkeletonBanner />
         ) : activeBanners.length > 0 ? (
@@ -269,7 +269,7 @@ export function StorefrontHome() {
 
       {/* 3. Spotlight Coupon Alert Bar (If Available) */}
       {spotlightCoupon && (
-        <section className="max-w-7xl mx-auto px-2 md:px-6 mt-3 sm:mt-4">
+        <section className="w-full max-w-none px-3 md:px-8 lg:px-12 mt-3 sm:mt-4">
           <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white rounded-xl md:rounded-2xl p-2.5 sm:p-3 md:p-4 shadow-md flex items-center justify-between gap-2.5">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center flex-shrink-0">
@@ -297,7 +297,7 @@ export function StorefrontHome() {
 
       {/* 4. Horizontal Spotlight Products Reel (Flash Deals) */}
       {spotlightProducts.length > 0 && (
-        <section className="max-w-7xl mx-auto px-2 md:px-6 mt-4 sm:mt-6">
+        <section className="w-full max-w-none px-3 md:px-8 lg:px-12 mt-4 sm:mt-6">
           <div className="flex items-center justify-between mb-2.5">
             <div className="flex items-center gap-1.5">
               <div className="p-1 bg-rose-500/10 text-rose-500 rounded-lg">
@@ -332,7 +332,7 @@ export function StorefrontHome() {
 
       {/* 5. Sticky Category Filter Tab Bar */}
       <section className="sticky top-14 md:top-20 z-30 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md py-3 border-y border-neutral-200/50 dark:border-slate-800 mt-6 shadow-xs">
-        <div className="max-w-7xl mx-auto px-2 md:px-6 flex items-center justify-center gap-6 overflow-x-auto no-scrollbar">
+        <div className="w-full max-w-none px-3 md:px-8 lg:px-12 flex items-center justify-center gap-6 overflow-x-auto no-scrollbar">
           {allCategories.map((cat) => {
             const isSelected = selectedCategory === cat;
             return (
@@ -360,7 +360,7 @@ export function StorefrontHome() {
       </div>
 
       {/* 6. Main Product Feed Grid */}
-      <section className="max-w-7xl mx-auto px-2 md:px-6">
+      <section className="w-full max-w-none px-3 md:px-8 lg:px-12">
         <div className="text-center mb-6">
           <h2 className="font-tenor text-lg sm:text-2xl uppercase tracking-luxury text-neutral-900 dark:text-white mb-1">
             {selectedCategory === 'All' ? 'New Arrival' : `${selectedCategory}`}
@@ -391,12 +391,12 @@ export function StorefrontHome() {
       </section>
 
       {/* 7. Reviews & Customer Feedback */}
-      <section className="max-w-7xl mx-auto px-2 md:px-6 mt-8 sm:mt-12">
+      <section className="w-full max-w-none px-3 md:px-8 lg:px-12 mt-8 sm:mt-12">
         <TestimonialsSection products={products} orders={orders} />
       </section>
 
       {/* 8. FAQ Section */}
-      <section className="max-w-7xl mx-auto px-2 md:px-6 mt-6 sm:mt-8">
+      <section className="w-full max-w-none px-3 md:px-8 lg:px-12 mt-6 sm:mt-8">
         <FAQSection />
       </section>
 

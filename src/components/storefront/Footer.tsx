@@ -32,7 +32,7 @@ export function Footer() {
     <footer className="w-full mt-24 bg-surface border-t border-outline-variant/20 pt-16 pb-8 text-left relative overflow-hidden" id="luxury-storefront-footer">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(37,211,102,0.02)_0%,transparent_50%)] pointer-events-none" />
       
-      <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-12 gap-12 pb-12 border-b border-outline-variant/15">
+      <div className="w-full max-w-none px-4 md:px-8 lg:px-12 grid grid-cols-1 md:grid-cols-12 gap-12 pb-12 border-b border-outline-variant/15">
         
         {/* Brand Column */}
         <div className="md:col-span-5 space-y-4">
@@ -106,7 +106,7 @@ export function Footer() {
 
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 md:px-8 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-on-surface-variant opacity-80">
+      <div className="w-full max-w-none px-4 md:px-8 lg:px-12 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-on-surface-variant opacity-80">
         <p className="font-medium">
           © {new Date().getFullYear()} {storeSettings.storeName}. All rights reserved globally.
         </p>

@@ -278,6 +278,69 @@ async function initDb(db: Database) {
   }
 
   await seedDemoProducts(db);
+  await seedDemoFaqs(db);
+}
+
+export async function seedDemoFaqs(db: Database) {
+  const faqCount = await db.get('SELECT COUNT(*) as count FROM faqs');
+  if (!faqCount || faqCount.count < 4) {
+    const sampleFaqs = [
+      {
+        id: 'faq_1',
+        question: 'How do I place a direct order via WhatsApp?',
+        answer: 'Simply browse our catalog, select your item, colors, and sizes, then click the "WhatsApp Buy" button. This will instantly pre-fill your order details directly into a WhatsApp chat with our store team for fast confirmation.',
+        category: 'Ordering & Payment',
+        active: 1,
+        sortOrder: 1
+      },
+      {
+        id: 'faq_2',
+        question: 'What payment methods do you accept?',
+        answer: 'We support Cash on Delivery (COD), Direct Bank Transfer, UPI, Credit/Debit cards, and online payments via Stripe.',
+        category: 'Ordering & Payment',
+        active: 1,
+        sortOrder: 2
+      },
+      {
+        id: 'faq_3',
+        question: 'How long does shipping & delivery take?',
+        answer: 'Standard domestic delivery takes 2 to 5 business days. Express shipping options are available at checkout.',
+        category: 'Shipping',
+        active: 1,
+        sortOrder: 3
+      },
+      {
+        id: 'faq_4',
+        question: 'What is your return & exchange policy?',
+        answer: 'We offer a hassle-free 30-day return & exchange policy. Items must be unworn, unwashed, and in original packaging with tags intact.',
+        category: 'Returns',
+        active: 1,
+        sortOrder: 4
+      },
+      {
+        id: 'faq_5',
+        question: 'Are all products authentic and original?',
+        answer: 'Yes! All items in our store are 100% authentic, handcrafted from premium materials, and quality-inspected before dispatch.',
+        category: 'General',
+        active: 1,
+        sortOrder: 5
+      },
+      {
+        id: 'faq_6',
+        question: 'How can I track my order delivery?',
+        answer: 'Once your order is processed, you will receive a direct tracking link via WhatsApp/SMS. You can also visit our "Track Order" page anytime.',
+        category: 'Shipping',
+        active: 1,
+        sortOrder: 6
+      }
+    ];
+    for (const faq of sampleFaqs) {
+      await db.run(
+        'INSERT OR REPLACE INTO faqs (id, question, answer, category, active, sortOrder) VALUES (?, ?, ?, ?, ?, ?)',
+        [faq.id, faq.question, faq.answer, faq.category, faq.active, faq.sortOrder]
+      );
+    }
+  }
 }
 
 export async function seedDemoProducts(db: Database, force: boolean = false) {

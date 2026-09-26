@@ -59,14 +59,14 @@ export function TopNavBar() {
   };
 
   return (
-    <header className="fixed top-0 inset-x-0 h-14 md:h-20 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-neutral-200/60 dark:border-slate-800/80 z-40 transition-all">
+    <header className="fixed top-0 inset-x-0 h-14 md:h-20 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md border-b border-neutral-200/60 dark:border-slate-800/80 z-40 transition-all">
       <div className="w-full max-w-none h-full px-3 md:px-8 lg:px-12 flex items-center justify-between gap-2 md:gap-4 relative">
         
         {/* Left Action / Menu Trigger */}
         <div className="flex items-center gap-2">
           <button 
             onClick={() => setIsMobileDrawerOpen(true)}
-            className="p-2 text-neutral-800 dark:text-slate-200 hover:text-[#DD8560] transition-colors active:scale-95"
+            className="p-2 text-neutral-800 dark:text-slate-100 hover:text-[#DD8560] transition-colors active:scale-95"
             title="Open Menu"
           >
             <Menu className="w-5 h-5" />
@@ -84,7 +84,7 @@ export function TopNavBar() {
           ) : null}
 
           {(storeSettings.showStoreName !== false || !storeSettings.storeIcon) && (
-            <span className="font-tenor tracking-luxury text-sm sm:text-base md:text-xl font-normal text-neutral-900 dark:text-white uppercase transition-colors hover:text-[#DD8560] truncate max-w-[170px] sm:max-w-[260px]">
+            <span className="font-tenor tracking-luxury text-sm sm:text-base md:text-xl font-bold text-neutral-900 dark:text-slate-100 uppercase transition-colors hover:text-[#DD8560] truncate max-w-[170px] sm:max-w-[260px]">
               {storeSettings.storeName || 'OPEN FASHION'}
             </span>
           )}
@@ -188,7 +188,7 @@ export function TopNavBar() {
           {/* Mobile Search Trigger */}
           <button 
             onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-            className="p-2 text-neutral-800 dark:text-slate-200 hover:text-[#DD8560] active:scale-95 transition-transform"
+            className="p-2 text-neutral-800 dark:text-slate-100 hover:text-[#DD8560] active:scale-95 transition-transform"
             title="Search Store"
           >
             <Search className="w-5 h-5 stroke-[1.5]" />
@@ -197,7 +197,7 @@ export function TopNavBar() {
           {/* Shopping Bag Button */}
           <Link 
             to="/cart"
-            className="relative p-2 text-neutral-800 dark:text-slate-200 hover:text-[#DD8560] active:scale-95 transition-transform flex items-center justify-center"
+            className="relative p-2 text-neutral-800 dark:text-slate-100 hover:text-[#DD8560] active:scale-95 transition-transform flex items-center justify-center"
             title="Shopping Bag"
           >
             <ShoppingBag className="w-5 h-5 stroke-[1.5]" />

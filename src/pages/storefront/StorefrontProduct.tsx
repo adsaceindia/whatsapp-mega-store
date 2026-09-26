@@ -143,7 +143,7 @@ export function StorefrontProduct() {
   const galleryImages = [product.image, ...(product.gallery || [])].filter(Boolean);
 
   return (
-    <main className="w-full bg-white dark:bg-slate-950 min-h-screen pb-24 md:pb-12 text-left">
+    <main className="w-full bg-white dark:bg-slate-950 min-h-screen pb-36 md:pb-12 text-left">
       <Helmet>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
@@ -425,7 +425,7 @@ export function StorefrontProduct() {
       </div>
 
       {/* Mobile Sticky Bottom Purchase Action Bar (Native App Style) */}
-      <div className="fixed bottom-0 inset-x-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-neutral-200/80 dark:border-slate-800 p-3 z-40 md:hidden shadow-2xl">
+      <div className="fixed bottom-[68px] inset-x-3 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-neutral-200/80 dark:border-slate-800 p-2.5 rounded-2xl z-40 md:hidden shadow-2xl">
         <button
           onClick={() => {
             addToCart({
@@ -439,7 +439,7 @@ export function StorefrontProduct() {
             });
             triggerToast(`Added ${quantity}x "${product.title}" to bag!`);
           }}
-          className="w-full bg-[#111111] hover:bg-[#DD8560] dark:bg-slate-800 text-white py-3.5 rounded-xl font-tenor uppercase tracking-luxury text-xs font-bold active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg"
+          className="w-full bg-[#111111] hover:bg-[#DD8560] dark:bg-slate-800 text-white py-3 rounded-xl font-tenor uppercase tracking-luxury text-xs font-bold active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg"
         >
           <ShoppingBag className="w-4 h-4" />
           <span>Add To Bag • {formatPrice(currentPrice * quantity)}</span>

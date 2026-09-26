@@ -96,22 +96,14 @@ export function Footer() {
             <li>
               <Link to="/info?tab=terms" className="text-on-surface-variant hover:text-primary transition-colors font-medium">Terms & Operating Agreement</Link>
             </li>
-            <li>
-              <span onClick={handleAdminClick} className="cursor-pointer text-on-surface-variant/50 hover:text-primary transition-colors text-[10px] uppercase tracking-widest select-none">
-                Atelier Administration
-              </span>
-            </li>
           </ul>
         </div>
 
       </div>
 
-      <div className="w-full max-w-none px-4 md:px-8 lg:px-12 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-on-surface-variant opacity-80">
-        <p className="font-medium">
+      <div className="w-full max-w-none px-4 md:px-8 lg:px-12 pt-8 text-center text-xs text-on-surface-variant opacity-80">
+        <p className="font-medium text-center">
           © {new Date().getFullYear()} {storeSettings.storeName}. All rights reserved globally.
-        </p>
-        <p className="font-mono flex items-center gap-1.5 cursor-pointer" onClick={handleAdminClick} title="ATELIER ADMINISTRATION">
-          <span>Social Webstore Portal • Crafted to Perfection</span>
         </p>
       </div>
     </footer>

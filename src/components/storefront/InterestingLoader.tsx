@@ -1,11 +1,14 @@
 import React from 'react';
+import { useStoreConfig } from '../../context/StoreConfigContext';
 
 interface InterestingLoaderProps {
   message?: string;
   fullScreen?: boolean;
 }
 
-export function InterestingLoader({ message = "Curating Store Experience...", fullScreen = true }: InterestingLoaderProps) {
+export function InterestingLoader({ fullScreen = true }: InterestingLoaderProps) {
+  const { storeSettings } = useStoreConfig();
+  const storeName = storeSettings?.storeName || 'My Store';
   const content = (
     <div className="flex flex-col items-center justify-center p-6 text-center max-w-sm mx-auto font-sans relative select-none">
       
@@ -78,13 +81,10 @@ export function InterestingLoader({ message = "Curating Store Experience...", fu
         </div>
       </div>
 
-      {/* Luxury ÉLANORA Brand Identity & Loading Status */}
-      <h3 className="font-tenor uppercase tracking-luxury text-sm md:text-base font-normal text-neutral-900 dark:text-white mb-1">
-        OPEN FASHION
+      {/* Dynamic Store Name Display Only */}
+      <h3 className="font-tenor uppercase tracking-luxury text-sm md:text-base font-extrabold text-neutral-900 dark:text-white">
+        {storeName}
       </h3>
-      <p className="text-xs font-sans text-neutral-500 dark:text-slate-400 tracking-wider">
-        {message}
-      </p>
 
     </div>
   );

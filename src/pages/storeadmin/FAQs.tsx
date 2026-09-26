@@ -11,7 +11,8 @@ import {
   Eye,
   EyeOff,
   MoveUp,
-  MoveDown
+  MoveDown,
+  Loader2
 } from 'lucide-react';
 import { 
   getFAQs, 
@@ -313,8 +314,8 @@ export function FAQs() {
       {/* Main FAQ List Section */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden text-left">
         {loading ? (
-          <div className="py-16 text-center">
-            <span className="material-symbols-outlined animate-spin text-[36px] text-primary">progress_activity</span>
+          <div className="py-16 text-center flex flex-col items-center justify-center">
+            <Loader2 className="w-9 h-9 animate-spin text-primary" />
             <p className="text-gray-500 mt-2 font-medium">Retrieving customer questions...</p>
           </div>
         ) : faqs.length === 0 ? (

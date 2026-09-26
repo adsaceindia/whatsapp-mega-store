@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Store, Phone, DollarSign } from 'lucide-react';
+import { Store, Phone, DollarSign, Loader2, Rocket } from 'lucide-react';
 import { saveStoreSettings, getStoreSettings, saveGeneralSettings, getGeneralSettings } from '../../services/settingsService';
 import { useStoreConfig } from '../../context/StoreConfigContext';
 
@@ -119,9 +119,9 @@ export function OnboardingModal({ isOpen, onClose }: { isOpen: boolean; onClose:
                   className="btn btn-primary btn-lg w-full mt-6"
                 >
                   {loading ? (
-                    <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+                    <Loader2 className="w-4.5 h-4.5 animate-spin" />
                   ) : (
-                    <span className="material-symbols-outlined text-[18px]">rocket_launch</span>
+                    <Rocket className="w-4.5 h-4.5" />
                   )}
                   Launch Store
                 </button>

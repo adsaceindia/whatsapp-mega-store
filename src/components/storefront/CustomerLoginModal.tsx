@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useCart } from '../../context/CartContext';
+import { Loader2 } from 'lucide-react';
 
 export function CustomerLoginModal() {
   const { showCustomerLogin, setShowCustomerLogin, loginCustomer } = useCart();
@@ -95,7 +96,7 @@ export function CustomerLoginModal() {
               className="w-full bg-primary text-white font-bold py-3 rounded-xl transition-all shadow-sm hover:bg-primary-hover flex justify-center items-center gap-2 text-sm mt-2"
             >
               {loading ? (
-                <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+                <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 'Sign In'
               )}

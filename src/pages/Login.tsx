@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router';
-import { LogIn, Store, Mail, Key, Eye, EyeOff } from 'lucide-react';
+import { LogIn, Store, Mail, Key, Eye, EyeOff, Loader2 } from 'lucide-react';
 
 export function Login() {
   const navigate = useNavigate();
@@ -114,7 +114,7 @@ export function Login() {
             className="btn btn-primary btn-lg w-full mt-2"
           >
             {loading ? (
-              <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+              <Loader2 className="w-4.5 h-4.5 animate-spin" />
             ) : (
               <LogIn size={18} />
             )}

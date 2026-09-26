@@ -108,11 +108,7 @@ export function SkeletonCategoryBento() {
 }
 
 export function SkeletonProductDetail() {
-  return (
-    <div className="w-full py-16 flex items-center justify-center">
-      <InterestingLoader message="Loading Product Details..." />
-    </div>
-  );
+  return <InterestingLoader message="Loading Product Details..." fullScreen />;
 }
 
 export function SkeletonQuizLoading() {

@@ -19,7 +19,8 @@ import {
   Globe,
   Coins,
   FileText,
-  Cpu
+  Cpu,
+  Loader2
 } from 'lucide-react';
 import { 
   getGeneralSettings, 
@@ -430,8 +431,8 @@ export function Settings() {
         {/* Configurations Forms Container */}
         <div className="lg:col-span-3 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           {loading ? (
-            <div className="py-12 text-center">
-              <span className="material-symbols-outlined animate-spin text-[36px] text-primary">progress_activity</span>
+            <div className="py-12 text-center flex flex-col items-center justify-center">
+              <Loader2 className="w-9 h-9 animate-spin text-primary" />
               <p className="text-gray-500 mt-2 font-medium">Retrieving settings...</p>
             </div>
           ) : (

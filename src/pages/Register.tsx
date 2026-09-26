@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router';
-import { Store, Mail, Key, UserPlus, Eye, EyeOff, Smartphone } from 'lucide-react';
+import { Store, Mail, Key, UserPlus, Eye, EyeOff, Smartphone, Loader2 } from 'lucide-react';
 
 export function Register() {
   const navigate = useNavigate();
@@ -157,7 +157,7 @@ export function Register() {
             className="btn btn-primary btn-lg w-full mt-2"
           >
             {loading ? (
-              <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+              <Loader2 className="w-4.5 h-4.5 animate-spin" />
             ) : (
               <UserPlus size={18} />
             )}

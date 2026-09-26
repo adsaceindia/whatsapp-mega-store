@@ -14,6 +14,7 @@ import { ProductGridItem } from "../../components/storefront/ProductGridItem";
 import { Breadcrumbs } from "../../components/storefront/Breadcrumbs";
 import { BlurImage } from "../../components/storefront/BlurImage";
 import { trackViewItemList, trackSelectItem } from '../../utils/analytics';
+import { InterestingLoader } from "../../components/storefront/InterestingLoader";
 
 export function StorefrontCategoryProducts() {
   const { storeSettings } = useStoreConfig();
@@ -128,6 +129,10 @@ export function StorefrontCategoryProducts() {
   const pageKeywords = categoryData?.seoKeywords 
     ? categoryData.seoKeywords 
     : (seoSettings?.keywords || 'ecommerce, whatsapp shop, online store');
+
+  if (loading) {
+    return <InterestingLoader message={`Loading ${formattedCategory}...`} fullScreen />;
+  }
 
   return (
     <div className="w-full max-w-container-max mx-auto flex">

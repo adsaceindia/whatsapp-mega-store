@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router';
 import React, { useEffect, Suspense } from 'react';
 import { trackPageView } from './utils/analytics';
+import { InterestingLoader } from './components/storefront/InterestingLoader';
 
 const StoreAdminLayout = React.lazy(() => import('./components/layout/StoreAdminLayout').then(m => ({ default: m.StoreAdminLayout })));
 const Login = React.lazy(() => import('./pages/Login').then(m => ({ default: m.Login })));
@@ -38,12 +39,7 @@ function PageTracker() {
 }
 
 const FallbackLoader = () => (
-  <div className="min-h-screen w-full flex items-center justify-center bg-background">
-    <div className="flex flex-col items-center gap-4">
-      <span className="material-symbols-outlined animate-spin text-4xl text-primary">progress_activity</span>
-      <p className="text-on-surface-variant text-sm font-medium animate-pulse">Loading...</p>
-    </div>
-  </div>
+  <InterestingLoader message="Loading Page..." fullScreen />
 );
 
 export default function App() {

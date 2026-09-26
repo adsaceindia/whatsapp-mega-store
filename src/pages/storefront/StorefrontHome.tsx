@@ -377,41 +377,112 @@ export function StorefrontHome() {
         </div>
       </section>
 
-      {/* 5.5 Rectangle Promo Banner Grid (Mobile-Optimized Rectangular Cards Above New Arrivals) */}
-      <section className="w-full max-w-none px-3 md:px-8 lg:px-12 mt-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 md:gap-6">
-          {activeRectangleBanners.slice(0, 2).map((b) => (
+      {/* 5.5 Dynamic Rectangle Promo Banners (1 Card, 2 Grid Cards, or >2 Sliding Carousel Reel) */}
+      {activeRectangleBanners.length > 0 && (
+        <section className="w-full max-w-none px-3 md:px-8 lg:px-12 mt-6">
+          {activeRectangleBanners.length === 1 ? (
+            /* Single Full-Width Card */
             <div 
-              key={b.id || b.title}
-              onClick={() => navigate(b.link || '/categories')}
-              className="relative h-[150px] sm:h-[180px] md:h-[220px] rounded-2xl overflow-hidden cursor-pointer group shadow-xs hover:shadow-md transition-all active:scale-[0.99] border border-neutral-200/60 dark:border-slate-800"
+              key={activeRectangleBanners[0].id || activeRectangleBanners[0].title}
+              onClick={() => navigate(activeRectangleBanners[0].link || '/categories')}
+              className="relative w-full h-[160px] sm:h-[220px] md:h-[260px] rounded-2xl md:rounded-3xl overflow-hidden cursor-pointer group shadow-sm hover:shadow-md transition-all active:scale-[0.99] border border-neutral-200/60 dark:border-slate-800"
             >
               <img 
-                src={b.image} 
-                alt={b.title}
+                src={activeRectangleBanners[0].image} 
+                alt={activeRectangleBanners[0].title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-4 sm:p-6 flex flex-col justify-end text-left text-white">
-                <span className="text-[9px] sm:text-[10px] font-tenor uppercase tracking-widest text-[#DD8560] font-bold mb-0.5">
-                  {b.tag || 'CURATED COLLECTION'}
+              <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/85 via-black/40 to-transparent p-5 sm:p-8 flex flex-col justify-end md:justify-center text-left text-white">
+                <span className="text-[10px] sm:text-xs font-tenor uppercase tracking-widest text-[#DD8560] font-bold mb-1">
+                  {activeRectangleBanners[0].tag || 'CURATED COLLECTION'}
                 </span>
-                <h3 className="font-tenor text-base sm:text-lg md:text-xl uppercase tracking-wider font-normal line-clamp-1 mb-1">
-                  {b.title}
+                <h3 className="font-tenor text-lg sm:text-2xl md:text-3xl uppercase tracking-wider font-normal line-clamp-1 mb-1.5">
+                  {activeRectangleBanners[0].title}
                 </h3>
-                {b.subtitle && (
-                  <p className="text-[11px] sm:text-xs text-neutral-300 font-sans line-clamp-1 opacity-90 mb-2">
-                    {b.subtitle}
+                {activeRectangleBanners[0].subtitle && (
+                  <p className="text-xs sm:text-sm text-neutral-300 font-sans line-clamp-1 opacity-90 mb-3 max-w-lg">
+                    {activeRectangleBanners[0].subtitle}
                   </p>
                 )}
-                <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-tenor uppercase tracking-luxury text-white font-bold group-hover:text-[#DD8560] transition-colors">
-                  <span>{b.buttonText || 'EXPLORE NOW'}</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                <div className="inline-flex items-center gap-2 text-xs font-tenor uppercase tracking-luxury text-white font-bold group-hover:text-[#DD8560] transition-colors">
+                  <span>{activeRectangleBanners[0].buttonText || 'EXPLORE NOW'}</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-      </section>
+          ) : activeRectangleBanners.length === 2 ? (
+            /* 2 Grid Cards */
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 md:gap-6">
+              {activeRectangleBanners.map((b) => (
+                <div 
+                  key={b.id || b.title}
+                  onClick={() => navigate(b.link || '/categories')}
+                  className="relative h-[150px] sm:h-[180px] md:h-[220px] rounded-2xl overflow-hidden cursor-pointer group shadow-xs hover:shadow-md transition-all active:scale-[0.99] border border-neutral-200/60 dark:border-slate-800"
+                >
+                  <img 
+                    src={b.image} 
+                    alt={b.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-4 sm:p-6 flex flex-col justify-end text-left text-white">
+                    <span className="text-[9px] sm:text-[10px] font-tenor uppercase tracking-widest text-[#DD8560] font-bold mb-0.5">
+                      {b.tag || 'CURATED COLLECTION'}
+                    </span>
+                    <h3 className="font-tenor text-base sm:text-lg md:text-xl uppercase tracking-wider font-normal line-clamp-1 mb-1">
+                      {b.title}
+                    </h3>
+                    {b.subtitle && (
+                      <p className="text-[11px] sm:text-xs text-neutral-300 font-sans line-clamp-1 opacity-90 mb-2">
+                        {b.subtitle}
+                      </p>
+                    )}
+                    <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-tenor uppercase tracking-luxury text-white font-bold group-hover:text-[#DD8560] transition-colors">
+                      <span>{b.buttonText || 'EXPLORE NOW'}</span>
+                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            /* > 2 Sliding Touch Carousel Reel */
+            <div className="relative group">
+              <div className="flex gap-3 md:gap-5 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-2 -mx-1 px-1">
+                {activeRectangleBanners.map((b) => (
+                  <div 
+                    key={b.id || b.title}
+                    onClick={() => navigate(b.link || '/categories')}
+                    className="w-[84%] sm:w-[48%] md:w-[45%] flex-shrink-0 snap-start relative h-[155px] sm:h-[190px] md:h-[230px] rounded-2xl overflow-hidden cursor-pointer group/card shadow-xs hover:shadow-md transition-all active:scale-[0.99] border border-neutral-200/60 dark:border-slate-800"
+                  >
+                    <img 
+                      src={b.image} 
+                      alt={b.title}
+                      className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-700" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-4 sm:p-5 flex flex-col justify-end text-left text-white">
+                      <span className="text-[9px] font-tenor uppercase tracking-widest text-[#DD8560] font-bold mb-0.5">
+                        {b.tag || 'CURATED COLLECTION'}
+                      </span>
+                      <h3 className="font-tenor text-base sm:text-lg uppercase tracking-wider font-normal line-clamp-1 mb-1">
+                        {b.title}
+                      </h3>
+                      {b.subtitle && (
+                        <p className="text-[11px] text-neutral-300 font-sans line-clamp-1 opacity-90 mb-2">
+                          {b.subtitle}
+                        </p>
+                      )}
+                      <div className="inline-flex items-center gap-1.5 text-[10px] font-tenor uppercase tracking-luxury text-white font-bold group-hover/card:text-[#DD8560] transition-colors">
+                        <span>{b.buttonText || 'EXPLORE NOW'}</span>
+                        <ArrowRight className="w-3.5 h-3.5 group-hover/card:translate-x-1 transition-transform" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+      )}
 
       {/* Signature Diamond Decorative Divider */}
       <div className="flex items-center justify-center gap-3 my-8 text-neutral-300 dark:text-slate-700">

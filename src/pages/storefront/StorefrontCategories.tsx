@@ -231,7 +231,6 @@ export function StorefrontCategories() {
                   key={product.id || product.title} 
                   product={product} 
                   triggerToast={triggerToast} 
-                  onQuickBuy={setQuickBuyProduct}
                 />
               ))
             )}

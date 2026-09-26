@@ -347,7 +347,6 @@ export function StorefrontHome() {
                 <ProductGridItem 
                   product={p} 
                   triggerToast={triggerToast} 
-                  onQuickBuy={setQuickBuyProduct} 
                 />
               </div>
             ))}
@@ -515,7 +514,6 @@ export function StorefrontHome() {
                 key={product.id || product.title} 
                 product={product} 
                 triggerToast={triggerToast}
-                onQuickBuy={setQuickBuyProduct}
               />
             ))}
           </div>

@@ -345,8 +345,8 @@ export function StorefrontProduct() {
                   </div>
                 </div>
 
-                {/* Desktop Action Buttons */}
-                <div className="hidden md:flex gap-3 mb-6">
+                {/* Desktop Action Button */}
+                <div className="hidden md:flex mb-6">
                   <button 
                     onClick={() => {
                       addToCart({
@@ -358,20 +358,12 @@ export function StorefrontProduct() {
                         size: selectedSize,
                         color: selectedColor
                       });
-                      triggerToast(`Added ${quantity}x "${product.title}" to cart!`);
+                      triggerToast(`Added ${quantity}x "${product.title}" to bag!`);
                     }}
-                    className="flex-1 bg-neutral-900 dark:bg-slate-800 hover:bg-neutral-800 dark:hover:bg-slate-700 text-white py-3.5 rounded-2xl font-bold text-sm shadow-md active:scale-95 transition-all flex items-center justify-center gap-2"
+                    className="w-full bg-[#111111] hover:bg-[#DD8560] dark:bg-slate-800 dark:hover:bg-[#DD8560] text-white py-4 rounded-2xl font-tenor uppercase tracking-luxury text-sm font-bold shadow-md active:scale-[0.98] transition-all flex items-center justify-center gap-2"
                   >
                     <ShoppingBag className="w-4 h-4" />
-                    <span>Add to Bag</span>
-                  </button>
-
-                  <button 
-                    onClick={() => setQuickBuyProduct(product)}
-                    className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white py-3.5 rounded-2xl font-bold text-sm shadow-lg shadow-emerald-600/30 active:scale-95 transition-all flex items-center justify-center gap-2"
-                  >
-                    <MessageSquare className="w-4 h-4" />
-                    <span>Quick WhatsApp Buy</span>
+                    <span>Add To Bag • {formatPrice(currentPrice * quantity)}</span>
                   </button>
                 </div>
               </div>
@@ -424,7 +416,7 @@ export function StorefrontProduct() {
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
               {suggestedProducts.map(item => (
-                <ProductGridItem key={item.id} product={item} triggerToast={triggerToast} onQuickBuy={setQuickBuyProduct} />
+                <ProductGridItem key={item.id} product={item} triggerToast={triggerToast} />
               ))}
             </div>
           </div>
@@ -433,7 +425,7 @@ export function StorefrontProduct() {
       </div>
 
       {/* Mobile Sticky Bottom Purchase Action Bar (Native App Style) */}
-      <div className="fixed bottom-0 inset-x-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-neutral-200/80 dark:border-slate-800 p-3 z-40 flex items-center gap-2.5 md:hidden shadow-2xl">
+      <div className="fixed bottom-0 inset-x-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-neutral-200/80 dark:border-slate-800 p-3 z-40 md:hidden shadow-2xl">
         <button
           onClick={() => {
             addToCart({
@@ -445,20 +437,12 @@ export function StorefrontProduct() {
               size: selectedSize,
               color: selectedColor
             });
-            triggerToast(`Added to cart!`);
+            triggerToast(`Added ${quantity}x "${product.title}" to bag!`);
           }}
-          className="flex-1 bg-neutral-900 dark:bg-slate-800 text-white py-2.5 rounded-xl font-bold text-xs active:scale-95 transition-all flex items-center justify-center gap-1.5"
+          className="w-full bg-[#111111] hover:bg-[#DD8560] dark:bg-slate-800 text-white py-3.5 rounded-xl font-tenor uppercase tracking-luxury text-xs font-bold active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg"
         >
           <ShoppingBag className="w-4 h-4" />
-          <span>Add Bag</span>
-        </button>
-
-        <button
-          onClick={() => setQuickBuyProduct(product)}
-          className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 rounded-xl font-extrabold text-xs shadow-md shadow-emerald-600/30 active:scale-95 transition-all flex items-center justify-center gap-1.5"
-        >
-          <MessageSquare className="w-4 h-4" />
-          <span>WhatsApp Buy</span>
+          <span>Add To Bag • {formatPrice(currentPrice * quantity)}</span>
         </button>
       </div>
     </main>

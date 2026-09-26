@@ -103,15 +103,40 @@ export function StorefrontHome() {
     }, 3000);
   };
 
-  const activeBanners = banners.length > 0 ? banners : DEFAULT_BANNERS;
+  const DEFAULT_RECTANGLE_BANNERS: Banner[] = [
+    {
+      id: 'rect_1',
+      title: 'SUMMER ESSENTIALS',
+      subtitle: 'Lightweight linen & organic cottons crafted for warmer days',
+      image: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=1000&q=80',
+      link: '/categories',
+      buttonText: 'EXPLORE NOW',
+      tag: 'SEASONAL EDIT'
+    },
+    {
+      id: 'rect_2',
+      title: 'THE ACCESSORY EDIT',
+      subtitle: 'Handcrafted leather totes, silk scarves & 18k gold jewelry',
+      image: 'https://images.unsplash.com/photo-1509319117193-57bab727e09d?auto=format&fit=crop&w=1000&q=80',
+      link: '/categories',
+      buttonText: 'SHOP EDIT',
+      tag: 'NEW ARRIVALS'
+    }
+  ];
+
+  const heroBanners = banners.filter(b => (!b.position || b.position === 1 || b.type === 'hero'));
+  const activeHeroBanners = heroBanners.length > 0 ? heroBanners : DEFAULT_BANNERS;
+
+  const customRectangleBanners = banners.filter(b => b.position === 2 || b.type === 'rectangle');
+  const activeRectangleBanners = customRectangleBanners.length > 0 ? customRectangleBanners : DEFAULT_RECTANGLE_BANNERS;
 
   useEffect(() => {
-    if (activeBanners.length === 0) return;
+    if (activeHeroBanners.length === 0) return;
     const timer = setInterval(() => {
-      setCurrentBannerIndex((prev) => (prev + 1) % activeBanners.length);
+      setCurrentBannerIndex((prev) => (prev + 1) % activeHeroBanners.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, [activeBanners]);
+  }, [activeHeroBanners]);
 
   // Derive categories and filtered products
   const categoryNames = Array.from(new Set([
@@ -200,9 +225,9 @@ export function StorefrontHome() {
       <section className="w-full max-w-none px-0 sm:px-4 md:px-8 lg:px-12 mt-0 sm:mt-3 md:mt-6">
         {loadingBanners ? (
           <SkeletonBanner />
-        ) : activeBanners.length > 0 ? (
+        ) : activeHeroBanners.length > 0 ? (
           <div className="relative w-full h-[220px] sm:h-[320px] md:h-[420px] lg:h-[480px] rounded-none sm:rounded-2xl md:rounded-3xl overflow-hidden shadow-md group">
-            {activeBanners.map((banner, index) => (
+            {activeHeroBanners.map((banner, index) => (
               <div 
                 key={banner.id}
                 className={`absolute inset-0 transition-opacity duration-700 ${index === currentBannerIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
@@ -236,16 +261,16 @@ export function StorefrontHome() {
             ))}
 
             {/* Slider Controls */}
-            {activeBanners.length > 1 && (
+            {activeHeroBanners.length > 1 && (
               <>
                 <button 
-                  onClick={() => setCurrentBannerIndex((prev) => (prev - 1 + activeBanners.length) % activeBanners.length)}
+                  onClick={() => setCurrentBannerIndex((prev) => (prev - 1 + activeHeroBanners.length) % activeHeroBanners.length)}
                   className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-slate-900/80 hover:bg-white text-neutral-800 dark:text-white p-2 rounded-full shadow-md z-20 opacity-0 group-hover:opacity-100 transition-opacity hidden md:block"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
                 <button 
-                  onClick={() => setCurrentBannerIndex((prev) => (prev + 1) % activeBanners.length)}
+                  onClick={() => setCurrentBannerIndex((prev) => (prev + 1) % activeHeroBanners.length)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-slate-900/80 hover:bg-white text-neutral-800 dark:text-white p-2 rounded-full shadow-md z-20 opacity-0 group-hover:opacity-100 transition-opacity hidden md:block"
                 >
                   <ChevronRight className="w-5 h-5" />
@@ -253,7 +278,7 @@ export function StorefrontHome() {
 
                 {/* Dot Pagination */}
                 <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
-                  {activeBanners.map((_, idx) => (
+                  {activeHeroBanners.map((_, idx) => (
                     <button 
                       key={idx}
                       onClick={() => setCurrentBannerIndex(idx)}
@@ -349,6 +374,42 @@ export function StorefrontHome() {
               </button>
             );
           })}
+        </div>
+      </section>
+
+      {/* 5.5 Rectangle Promo Banner Grid (Mobile-Optimized Rectangular Cards Above New Arrivals) */}
+      <section className="w-full max-w-none px-3 md:px-8 lg:px-12 mt-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 md:gap-6">
+          {activeRectangleBanners.slice(0, 2).map((b) => (
+            <div 
+              key={b.id || b.title}
+              onClick={() => navigate(b.link || '/categories')}
+              className="relative h-[150px] sm:h-[180px] md:h-[220px] rounded-2xl overflow-hidden cursor-pointer group shadow-xs hover:shadow-md transition-all active:scale-[0.99] border border-neutral-200/60 dark:border-slate-800"
+            >
+              <img 
+                src={b.image} 
+                alt={b.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-4 sm:p-6 flex flex-col justify-end text-left text-white">
+                <span className="text-[9px] sm:text-[10px] font-tenor uppercase tracking-widest text-[#DD8560] font-bold mb-0.5">
+                  {b.tag || 'CURATED COLLECTION'}
+                </span>
+                <h3 className="font-tenor text-base sm:text-lg md:text-xl uppercase tracking-wider font-normal line-clamp-1 mb-1">
+                  {b.title}
+                </h3>
+                {b.subtitle && (
+                  <p className="text-[11px] sm:text-xs text-neutral-300 font-sans line-clamp-1 opacity-90 mb-2">
+                    {b.subtitle}
+                  </p>
+                )}
+                <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-tenor uppercase tracking-luxury text-white font-bold group-hover:text-[#DD8560] transition-colors">
+                  <span>{b.buttonText || 'EXPLORE NOW'}</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 

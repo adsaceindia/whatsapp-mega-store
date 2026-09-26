@@ -2,11 +2,15 @@ export interface Banner {
   id?: string;
   title: string;
   image: string;
+  subtitle?: string;
+  tag?: string;
+  buttonText?: string;
   link?: string;
   active?: boolean;
   startDate?: string;
   endDate?: string;
   position?: number;
+  type?: 'hero' | 'rectangle';
 }
 
 export const getBanners = async (): Promise<Banner[]> => {

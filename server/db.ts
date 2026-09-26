@@ -277,9 +277,17 @@ async function initDb(db: Database) {
     }
   }
 
-  // Seed sample products if empty or fewer than 10
+  await seedDemoProducts(db);
+}
+
+export async function seedDemoProducts(db: Database, force: boolean = false) {
   const prodCount = await db.get('SELECT COUNT(*) as count FROM products');
-  if (prodCount && prodCount.count < 10) {
+  const hasOld = await db.get("SELECT COUNT(*) as count FROM products WHERE title LIKE '%Headphones%' OR title LIKE '%Watch%'");
+  
+  if (force || !prodCount || prodCount.count < 10 || (hasOld && hasOld.count > 0)) {
+    // Clean old dummy products if any exist
+    await db.run("DELETE FROM products WHERE title LIKE '%Headphones%' OR title LIKE '%Watch%' OR title LIKE '%Denim Jacket%'");
+
     const sampleProducts = [
       {
         id: 'prod_1',

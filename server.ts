@@ -4,7 +4,7 @@ import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
 import Stripe from 'stripe';
 import * as dotenv from 'dotenv';
-import { getDb } from './server/db';
+import { getDb, seedDemoProducts } from './server/db';
 dotenv.config();
 
 // Lazy load Stripe
@@ -121,9 +121,24 @@ async function startServer() {
   });
 
   // Products API
+  app.all('/api/seed-demo', async (req, res) => {
+    try {
+      await seedDemoProducts(db, true);
+      const rows = await db.all('SELECT * FROM products');
+      res.json({ success: true, message: 'Successfully seeded 10 luxury demo products!', count: rows.length });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
   app.get('/api/products', async (req, res) => {
     try {
-      const rows = await db.all('SELECT * FROM products');
+      let rows = await db.all('SELECT * FROM products');
+      const hasOld = rows.some(r => r.title && (r.title.toLowerCase().includes('headphones') || r.title.toLowerCase().includes('watch')));
+      if (rows.length < 10 || hasOld) {
+        await seedDemoProducts(db, true);
+        rows = await db.all('SELECT * FROM products');
+      }
       const products = rows.map(r => ({
         ...r,
         sale: Boolean(r.sale),

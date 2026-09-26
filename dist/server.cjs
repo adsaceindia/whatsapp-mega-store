@@ -270,8 +270,13 @@ async function initDb(db) {
       );
     }
   }
+  await seedDemoProducts(db);
+}
+async function seedDemoProducts(db, force = false) {
   const prodCount = await db.get("SELECT COUNT(*) as count FROM products");
-  if (prodCount && prodCount.count < 10) {
+  const hasOld = await db.get("SELECT COUNT(*) as count FROM products WHERE title LIKE '%Headphones%' OR title LIKE '%Watch%'");
+  if (force || !prodCount || prodCount.count < 10 || hasOld && hasOld.count > 0) {
+    await db.run("DELETE FROM products WHERE title LIKE '%Headphones%' OR title LIKE '%Watch%' OR title LIKE '%Denim Jacket%'");
     const sampleProducts = [
       {
         id: "prod_1",
@@ -543,9 +548,23 @@ async function startServer() {
       res.status(500).json({ error: err.message });
     }
   });
+  app.all("/api/seed-demo", async (req, res) => {
+    try {
+      await seedDemoProducts(db, true);
+      const rows = await db.all("SELECT * FROM products");
+      res.json({ success: true, message: "Successfully seeded 10 luxury demo products!", count: rows.length });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
   app.get("/api/products", async (req, res) => {
     try {
-      const rows = await db.all("SELECT * FROM products");
+      let rows = await db.all("SELECT * FROM products");
+      const hasOld = rows.some((r) => r.title && (r.title.toLowerCase().includes("headphones") || r.title.toLowerCase().includes("watch")));
+      if (rows.length < 10 || hasOld) {
+        await seedDemoProducts(db, true);
+        rows = await db.all("SELECT * FROM products");
+      }
       const products = rows.map((r) => ({
         ...r,
         sale: Boolean(r.sale),

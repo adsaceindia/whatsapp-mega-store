@@ -149,11 +149,23 @@ export function Banners() {
               />
             </div>
             <div>
+              <label className="block text-sm font-semibold text-gray-900 mb-1">Banner Placement / Type</label>
+              <select
+                value={newBanner.position || 1}
+                onChange={e => setNewBanner({...newBanner, position: Number(e.target.value)})}
+                className="w-full p-3 border-2 border-outline-variant rounded-xl bg-surface-container-low outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all text-sm font-medium"
+              >
+                <option value={1}>Hero Top Carousel (Main Slider at Top)</option>
+                <option value={2}>Rectangle Promo Card (Right Above New Arrivals)</option>
+              </select>
+            </div>
+            <div>
               <label className="block text-sm font-semibold text-gray-900 mb-1">Button Text</label>
               <input 
                 type="text" 
                 value={newBanner.buttonText || ''} 
                 onChange={e => setNewBanner({...newBanner, buttonText: e.target.value})}
+                placeholder="e.g. SHOP NOW"
                 className="w-full p-3 border-2 border-outline-variant rounded-xl bg-surface-container-low outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
               />
             </div>
@@ -192,7 +204,14 @@ export function Banners() {
                   <img src={banner.image} alt={banner.title} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 </div>
                 <div className="flex-1 text-center md:text-left">
-                  <h3 className="font-bold text-gray-900">{banner.title}</h3>
+                  <div className="flex items-center gap-2 mb-1 justify-center md:justify-start">
+                    <h3 className="font-bold text-gray-900">{banner.title}</h3>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase font-mono ${
+                      banner.position === 2 ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-blue-100 text-blue-800 border border-blue-300'
+                    }`}>
+                      {banner.position === 2 ? 'Above New Arrivals' : 'Top Hero Carousel'}
+                    </span>
+                  </div>
                   {banner.subtitle && <p className="text-sm text-gray-600 mt-1">{banner.subtitle}</p>}
                   <p className="text-xs text-gray-500 font-mono mt-1 truncate max-w-sm">{banner.image}</p>
                 </div>
